@@ -1,0 +1,699 @@
+@font-face {
+  font-family: 'Atomic JetBrains Symbols';
+  src: url('../assets/fonts/jetbrains-mono-symbols-regular.ttf') format('truetype');
+  font-display: block;
+  font-style: normal;
+  font-weight: 100 600;
+  unicode-range: U+2192, U+2198, U+21BA, U+2713, U+00D7;
+}
+
+@font-face {
+  font-family: 'Atomic JetBrains Symbols';
+  src: url('../assets/fonts/jetbrains-mono-symbols-bold.ttf') format('truetype');
+  font-display: block;
+  font-style: normal;
+  font-weight: 601 900;
+  unicode-range: U+2192, U+2198, U+21BA, U+2713, U+00D7;
+}
+
+/* Deck-scoped aliases of the Carbon Signal tokens. Semantic jobs stay fixed:
+   cyan acts, mint verifies, coral blocks, cobalt orchestrates, yellow marks one phrase (the thesis "done."). */
+.verification-deck {
+  --ve-void: oklch(13.9% 0.01 262);
+  --ve-ink: oklch(17.6% 0.014 258);
+  --ve-panel: oklch(21.3% 0.019 262);
+  --ve-elevated: oklch(25.2% 0.029 264);
+  --ve-white: oklch(97.3% 0.004 157);
+  --ve-muted: oklch(75.1% 0.018 256);
+  --ve-structure: oklch(55.5% 0.029 256);
+  --ve-cyan: oklch(80.2% 0.128 207);
+  --ve-mint: oklch(80.3% 0.118 160);
+  --ve-coral: oklch(72.3% 0.139 25);
+  --ve-violet: oklch(65.4% 0.183 267);
+  --ve-violet-text: oklch(76% 0.12 267);
+  --ve-yellow: oklch(88.8% 0.137 93);
+  --ve-cobalt-surface: oklch(20% 0.04 267);
+  --ve-mint-surface: oklch(20% 0.03 160);
+  --ve-coral-surface: oklch(20% 0.035 25);
+  --ve-cyan-surface: oklch(21% 0.035 207);
+  --ve-sans: 'Manrope Variable', 'Atomic JetBrains Symbols', sans-serif;
+  --ve-mono: 'JetBrains Mono Variable', 'Atomic JetBrains Symbols', monospace;
+  --ve-composer-surface: oklch(25.2% 0.029 264 / 0.74);
+  --ve-composer-edge: oklch(55.5% 0.029 256 / 0.6);
+  --ve-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ve-motion: 340ms;
+  --ve-stagger: 75ms;
+  --ve-motion-start: 160ms;
+  background: var(--ve-void);
+  color: var(--ve-white);
+  font-family: var(--ve-sans);
+}
+
+.reveal-viewport,
+.reveal-viewport .reveal,
+.reveal.overview,
+.verification-slides { background: var(--atomic-void); }
+
+/* Reset Reveal's inherited block defaults inside this deck. */
+.verification-deck ol,
+.verification-deck ul { display: block; margin: 0; padding: 0; list-style: none; }
+.verification-deck li { font-size: 30px; line-height: 1.35; }
+.verification-deck figure { margin: 0; }
+.verification-deck img { margin: 0; }
+.verification-deck dl, .verification-deck dd { margin: 0; }
+.verification-deck a { color: inherit; }
+.verification-deck code,
+.verification-deck pre { font-family: var(--ve-mono); font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'calt' 0; }
+.verification-deck code { font-size: .92em; }
+.verification-deck s { text-decoration-thickness: 3px; }
+.verification-deck table { font-variant-numeric: tabular-nums; }
+::selection { background: var(--atomic-cyan); color: var(--atomic-void); }
+
+.verification-deck .section-name { color: var(--ve-cyan); font-weight: 720; }
+.verification-deck .slide-footer { font-size: 19px; }
+.verification-deck .slide-footer .source { color: var(--ve-muted); }
+.verification-deck .repo-signature { font-size: 19px; }
+.verification-deck .slide-body { justify-content: flex-start; gap: 30px; padding: 30px 0 20px; }
+/* Content starts close under the title. Free space splits 1:3 above and below it, so the content sits high
+   and the frame still reads balanced. Prompt-only slides center the composer in the space under the title. */
+.verification-deck:not(.ve-divider):not(.thesis-slide):not(.closing-slide):not(.ve-cover) .slide-body > * { order: 2; }
+.verification-deck:not(.ve-divider):not(.thesis-slide):not(.closing-slide):not(.ve-cover) .slide-body > :is(h2, .demo-head) { order: 0; }
+.verification-deck:not(.ve-divider):not(.thesis-slide):not(.closing-slide):not(.ve-cover) .slide-body::before { content: ''; order: 1; flex: 1 1 0; margin-top: -30px; }
+.verification-deck:not(.ve-divider):not(.thesis-slide):not(.closing-slide):not(.ve-cover) .slide-body::after { content: ''; order: 3; flex: 3 1 0; }
+.verification-deck:not(.ve-divider):not(.thesis-slide):not(.closing-slide):not(.ve-cover) .slide-body:has(> .prompt-solo)::after { flex-grow: 1; }
+.verification-deck h2 { max-width: 1560px; font-size: 62px; line-height: 1.04; letter-spacing: -.03em; }
+.reveal .verification-deck h2 { max-width: 1560px; }
+.verification-deck h3 { font-size: 34px; }
+.verification-deck .highlight-cyan { color: var(--ve-cyan); }
+.verification-deck .highlight-yellow { color: var(--ve-yellow); }
+.verification-deck .muted { color: var(--ve-muted); }
+
+/* Shared deck components */
+.verification-deck .group-title { color: var(--ve-muted); font: 760 21px/1.2 var(--ve-mono) !important; letter-spacing: .08em; text-transform: uppercase !important; }
+
+/* Copyable prompt, drawn as a chat composer after the stage photo (screenshot 02): the prompt text on a rounded,
+   translucent dark field, then a tool row with "+" on the left and a mic and a round send button on the right.
+   Named exception to the square-corner, no-blur rules: composers only, about 24px radius and a light blur.
+   The composer has no visible label. role="group", aria-label="Prompt" and data-composer identify it.
+   Clicking the body selects the whole prompt, so a viewer of the shared deck can copy it in one move. */
+.prompt-window { display: flex; flex-direction: column; flex-shrink: 0; min-width: 0; border: 1px solid var(--ve-composer-edge); border-radius: 24px; background: var(--ve-composer-surface); backdrop-filter: blur(8px); }
+.prompt-bar { display: flex; align-items: center; gap: 18px; padding: 4px 22px 18px 26px; }
+.composer-icon { width: 30px; height: 30px; flex-shrink: 0; }
+.composer-tools { display: flex; align-items: center; gap: 22px; margin-left: auto; }
+.composer-send { width: 46px; height: 46px; flex-shrink: 0; }
+.verification-deck pre.prompt-body { width: 100%; margin: 0; padding: 30px 34px 16px; box-shadow: none; background: transparent; color: var(--ve-white); font: 500 24px/1.5 var(--ve-mono); white-space: pre-wrap; word-wrap: normal; overflow-wrap: break-word; tab-size: 2; user-select: all; cursor: text; }
+.verification-deck pre.prompt-body.sm { font-size: 22px; line-height: 1.48; }
+.prompt-body .slot { color: var(--ve-cyan); font-weight: 700; }
+
+/* Plain lists with a square marker. */
+ul.plain { display: flex; flex-direction: column; gap: 12px; }
+ul.plain li { position: relative; padding-left: 34px; font-size: 28px; line-height: 1.32; }
+ul.plain li::before { content: ''; position: absolute; left: 0; top: .5em; width: 12px; height: 12px; background: var(--ve-structure); }
+ul.plain.cyan li::before { background: var(--ve-cyan); }
+ul.plain.mint li::before { background: var(--ve-mint); }
+ul.plain.coral li::before { background: var(--ve-coral); }
+ul.plain.sm li { font-size: 25px; }
+ul.plain code { color: var(--ve-cyan); }
+
+/* Two-column text and prompt layouts */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; align-items: center; min-height: 0; }
+.split.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.split.wide-left { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.stack { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.stack.tight { gap: 16px; }
+
+/* 01 Cover */
+.ve-cover .cover-body { justify-content: center; gap: 0; padding: 0; }
+.ve-cover .cover-body > * { width: fit-content; }
+.ve-cover h1 { max-width: 1240px; font-size: 100px; line-height: .98; letter-spacing: -.035em; }
+p.cover-speaker { display: flex; align-items: baseline; gap: 22px; margin-top: 76px !important; }
+.cover-speaker .speaker-name { color: var(--ve-white); font: 800 30px/1.25 var(--ve-mono) !important; }
+.cover-speaker .speaker-sep { color: var(--ve-muted); font: 700 30px/1.25 var(--ve-mono); }
+.cover-speaker .speaker-role { color: var(--ve-muted); font: 600 30px/1.25 var(--ve-mono) !important; white-space: nowrap; }
+.cover-mark { position: absolute; right: 150px; top: 330px; width: 300px; height: 250px; object-fit: contain; }
+
+/* 02 Thesis */
+.verification-deck .thesis-body { justify-content: center; gap: 0; }
+.thesis-slide .claim { max-width: 1240px; font-size: 88px; line-height: 1.04; letter-spacing: -.035em; }
+
+/* 03 Framing */
+ol.phase-rail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px; margin-top: 18px; border-top: 3px solid var(--ve-structure); }
+ol.phase-rail li { position: relative; display: flex; flex-direction: column; gap: 20px; padding-top: 44px; }
+ol.phase-rail li::before { content: ''; position: absolute; top: -12px; left: 0; width: 21px; height: 21px; background: var(--ve-void); border: 3px solid var(--ve-cyan); }
+ol.phase-rail li.during::before { border-color: var(--ve-mint); }
+ol.phase-rail li.after::before { border-color: var(--ve-mint); background: var(--ve-mint); }
+.phase-name { color: var(--ve-cyan); font: 780 22px/1 var(--ve-mono); letter-spacing: .08em; }
+ol.phase-rail li.during .phase-name, ol.phase-rail li.after .phase-name { color: var(--ve-mint); }
+ol.phase-rail strong { font-size: 34px; font-weight: 700; line-height: 1.32; }
+
+/* 04 and 05 Live build. The kickoff prompt sits in the same centred composer as every prompt-only slide. The
+   pipeline is one vertical list of seven rows joined by a thin spine. Every row after the prompt carries a mint check at its right edge. */
+.verification-deck .live-prompt pre.prompt-body { padding: 24px 30px 14px; font-size: 23px; line-height: 1.42; }
+ol.pipeline { position: relative; display: flex; flex-direction: column; gap: 22px; width: 1400px; align-self: center; }
+ol.pipeline::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: var(--ve-structure); transform-origin: top; }
+ol.pipeline li.pipe-step { position: relative; display: grid; grid-template-columns: 380px minmax(0, 1fr) 40px; align-items: center; gap: 24px; padding: 12px 28px 12px 32px; border: 2px solid var(--ve-cyan); background: var(--ve-ink); }
+ol.pipeline li.pipe-step.pipe-input { border-style: dashed; }
+ol.pipeline li.pipe-step.pipe-workflow { border-color: var(--ve-violet); background: var(--ve-cobalt-surface); }
+ol.pipeline li.pipe-step.pipe-game { border-color: var(--ve-mint); background: var(--ve-mint-surface); }
+.pipe-tool { color: var(--ve-cyan); font: 780 25px/1.2 var(--ve-mono); letter-spacing: .04em; }
+.pipe-step.pipe-input .pipe-tool { color: var(--ve-muted); }
+.pipe-step.pipe-workflow .pipe-tool { color: var(--ve-violet-text); }
+.pipe-step.pipe-game .pipe-tool { color: var(--ve-mint); }
+.pipe-what { color: var(--ve-white); font-size: 27px; line-height: 1.25; }
+.pipe-ok { width: 36px; height: 36px; justify-self: end; }
+
+/* Section dividers */
+.ve-divider .divider-body { justify-content: center; gap: 28px; padding-bottom: 110px; }
+.ve-divider h2 { color: var(--atomic-void); font-size: 150px; line-height: .95; letter-spacing: -.04em; }
+.ve-divider .divider-body p { max-width: 1300px; color: var(--atomic-void); font-size: 46px; font-weight: 700; line-height: 1.2; text-wrap: balance; }
+.ve-divider .section-name { color: var(--atomic-inverse-cyan); }
+.ve-divider .repo-signature { opacity: 1; }
+.ve-divider .repo-signature img { filter: brightness(0); }
+
+/* 06 Bottleneck and 11 oracle drift */
+.evidence-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.evidence-card { display: flex; flex-direction: column; justify-content: space-between; gap: 36px; min-height: 440px; padding: 44px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+.verification-deck .evidence-card blockquote { width: auto; max-width: none; margin: 0; padding: 0; background: none; box-shadow: none; font-style: normal; }
+.evidence-card blockquote p { font-size: 46px; line-height: 1.22; font-weight: 720; letter-spacing: -.01em; }
+.evidence-card figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; color: var(--ve-muted); font: 560 22px/1.4 var(--ve-mono); }
+.evidence-card figcaption strong { color: var(--ve-white); }
+.evidence-pair.compact .evidence-card { min-height: 0; gap: 28px; padding: 36px 40px; }
+.evidence-pair.compact blockquote p { font-size: 36px; }
+.evidence-tag { padding: 6px 10px; border: 1px solid var(--ve-structure); color: var(--ve-muted); font: 760 19px/1 var(--ve-mono); letter-spacing: .05em; }
+
+/* 07 Terms */
+.terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.term { min-height: 220px; padding: 38px 44px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+.term dt { font-size: 50px; font-weight: 800; letter-spacing: -.02em; }
+.term dd { margin-top: 16px; color: var(--ve-muted); font-size: 34px; line-height: 1.3; }
+
+/* 08 The check sits outside the agent */
+.loop-figure { display: grid; grid-template-rows: auto auto auto; }
+.loop-row, .loop-shortcut, .loop-return { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr 44px 1fr 44px 1fr; }
+.loop-row { align-items: stretch; }
+.loop-node { display: flex; flex-direction: column; justify-content: flex-start; gap: 16px; min-height: 220px; padding: 30px 24px 24px; border: 3px solid var(--ve-structure); background: var(--ve-panel); }
+.loop-node span { color: var(--ve-muted); font: 780 20px/1 var(--ve-mono); letter-spacing: .06em; }
+.loop-node strong { font-size: 32px; line-height: 1.18; }
+.loop-node.criteria { border-style: dashed; border-color: var(--ve-cyan); }
+.loop-node.agent { border-color: var(--ve-violet); background: var(--ve-cobalt-surface); }
+.loop-node.agent span { color: var(--ve-violet-text); }
+.loop-node.actions { border-color: var(--ve-cyan); }
+.loop-node.checks { border-color: var(--ve-mint); background: var(--ve-mint-surface); }
+.loop-node.checks span { color: var(--ve-mint); }
+.loop-arrow { position: relative; align-self: center; height: 3px; margin: 0 8px 0 4px; background: var(--ve-cyan); }
+.loop-arrow::after { content: ''; position: absolute; top: 50%; right: -10px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--ve-cyan); transform: translateY(-50%); }
+.loop-shortcut p { grid-column: 3 / 10; display: flex; justify-content: center; align-items: center; gap: .5em; height: 72px; margin: 0 120px !important; border: 3px dashed var(--ve-coral); border-bottom: 0; color: var(--ve-coral); font: 780 22px/1 var(--ve-mono) !important; letter-spacing: .05em; }
+.loop-return p { position: relative; grid-column: 3 / 10; display: flex; justify-content: center; align-items: center; gap: 18px; height: 80px; margin: 0 120px !important; border: 3px dashed var(--ve-mint); border-top: 0; color: var(--ve-white); font: 560 23px/1 var(--ve-mono) !important; }
+.loop-return p::before { content: ''; position: absolute; top: -1px; left: -12px; border-right: 10px solid transparent; border-bottom: 16px solid var(--ve-mint); border-left: 10px solid transparent; }
+.loop-return p span { color: var(--ve-mint); font-weight: 780; letter-spacing: .06em; }
+
+/* 10 Two charts: the METR hack rate under two prompts, and the share of cheating that edited tests.
+   Both are columns on one baseline and one height, so 80% reads the same in each panel. */
+.chart-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.chart-panel { display: flex; flex-direction: column; gap: 28px; padding: 32px 40px 30px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+.chart-panel figcaption { color: var(--ve-muted); font: 700 21px/1.3 var(--ve-mono); letter-spacing: .04em; }
+.col-chart { display: flex; align-items: flex-end; gap: 48px; height: 400px; padding-bottom: 0; border-bottom: 3px solid var(--ve-structure); }
+.col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 12px; width: 220px; height: 100%; }
+.col-value { color: var(--ve-coral); font: 820 64px/1 var(--ve-sans); letter-spacing: -.03em; }
+.col-bar { width: 100%; background: var(--ve-coral); }
+.col-bar.p80 { height: 80%; }
+.col-labels { display: flex; gap: 48px; }
+.col-labels span { width: 220px; color: var(--ve-white); font-size: 26px; font-weight: 650; line-height: 1.25; text-align: center; }
+.stack-col { display: flex; flex-direction: column; width: 220px; height: 100%; }
+.stack-rest { flex: 21; border: 2px solid var(--ve-structure); border-bottom: 0; background: var(--ve-ink); }
+.stack-part { flex: 79; background: var(--ve-coral); }
+.stack-labels { display: flex; flex-direction: column; justify-content: flex-start; gap: 10px; height: 100%; padding-top: 72px; }
+.stack-labels .col-value { font-size: 96px; }
+.stack-labels span:last-child { color: var(--ve-white); font-size: 30px; font-weight: 700; line-height: 1.2; }
+
+/* 12 Passing is not correct */
+.green-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 100px; align-items: end; }
+.green-metric { display: flex; flex-direction: column; }
+.green-metric .metric-value { color: var(--ve-coral); font-size: 230px; font-weight: 820; line-height: .82; letter-spacing: -.05em; }
+.green-metric .metric-label { margin-top: 28px; font-size: 36px; font-weight: 740; line-height: 1.2; }
+.affected { display: flex; flex-direction: column; gap: 36px; }
+p.affected-title { color: var(--ve-muted); font: 700 22px/1 var(--ve-mono) !important; letter-spacing: .06em; text-transform: uppercase; }
+.abar { display: grid; grid-template-columns: 290px 1fr 130px; align-items: center; gap: 24px; }
+.abar-name { font-size: 28px; font-weight: 700; }
+.abar-track { position: relative; height: 56px; border: 2px solid var(--ve-structure); background: var(--ve-panel); }
+.abar-fill { position: absolute; inset: 0 auto 0 0; background: var(--ve-coral); }
+.abar-fill.lite { width: 40.9%; }
+.abar-fill.verified { width: 24.4%; }
+.abar-val { color: var(--ve-coral); font: 780 32px/1 var(--ve-mono); text-align: right; }
+
+/* 39 Model checks: three checks in order, each a node on one line with an arrow into the next. No numerals. */
+ol.asset-checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 64px; align-items: stretch; }
+ol.asset-checks li { position: relative; display: flex; flex-direction: column; gap: 20px; min-height: 380px; padding: 40px 38px 44px; border: 2px solid var(--ve-mint); background: var(--ve-mint-surface); }
+ol.asset-checks li + li::before { content: ''; position: absolute; top: 50%; left: -56px; width: 42px; height: 3px; background: var(--ve-mint); transform: translateY(-50%); }
+ol.asset-checks li + li::after { content: ''; position: absolute; top: 50%; left: -16px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--ve-mint); transform: translateY(-50%); }
+ol.asset-checks strong { color: var(--ve-white); font-size: 38px; font-weight: 780; line-height: 1.15; }
+ol.asset-checks li > span:last-child { color: var(--ve-muted); font-size: 28px; line-height: 1.32; }
+
+/* 13 and 24 Checklists */
+ul.principle-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 70px; }
+ul.principle-list li { display: grid; grid-template-columns: 50px 1fr; align-items: baseline; gap: 14px; padding: 30px 0; border-bottom: 1px solid var(--ve-structure); }
+ul.principle-list li:nth-child(-n + 2) { border-top: 1px solid var(--ve-structure); }
+.p-mark { color: var(--ve-mint); font: 800 30px/1 var(--ve-mono); }
+ul.principle-list strong { font-size: 36px; line-height: 1.2; text-wrap: balance; }
+ul.principle-list.sm li { padding: 20px 0; }
+ul.principle-list.sm strong { font-size: 29px; font-weight: 680; }
+p.lead-line { color: var(--ve-muted); font-size: 32px !important; font-weight: 650; }
+p.lead-line strong { color: var(--ve-white); }
+
+/* 15 Criteria example, labeled illustrative */
+.example-box { display: flex; flex-direction: column; gap: 14px; padding: 22px 28px; border: 2px solid var(--ve-structure); background: var(--ve-panel); }
+.example-box p { font-size: 28px; font-weight: 680; line-height: 1.3; text-wrap: pretty; }
+
+/* 17 Deterministic tooling */
+.tool-compare { display: flex; flex-direction: column; gap: 22px; }
+.tool-col { display: flex; flex-direction: column; gap: 14px; padding: 22px 28px; border: 1px solid var(--ve-structure); }
+.tool-col.reject { background: var(--ve-coral-surface); }
+.tool-col.choose { background: var(--ve-mint-surface); }
+.tool-col header { display: flex; align-items: center; gap: 18px; }
+.tool-col h3 { font-size: 29px; }
+.tool-col .status-chip { font-size: 19px; white-space: nowrap; }
+
+/* Tables */
+.verification-deck table.ve-table { width: 100%; margin: 0; border-collapse: collapse; border: 2px solid var(--ve-structure); }
+.ve-table caption { caption-side: top; padding: 0 0 14px; text-align: left; }
+.ve-table th, .ve-table td { padding: 12px 18px; border-bottom: 1px solid var(--ve-structure); text-align: left; vertical-align: top; font-size: 24px; line-height: 1.3; }
+.ve-table thead th { background: var(--ve-panel); color: var(--ve-muted); font: 760 19px/1.2 var(--ve-mono); letter-spacing: .06em; text-transform: uppercase; vertical-align: bottom; white-space: nowrap; }
+.ve-table tbody th { font-weight: 800; }
+.ve-table tbody tr:last-child > * { border-bottom: 0; }
+.ve-table td.mono { color: var(--ve-cyan); font-family: var(--ve-mono); font-size: 23px; }
+/* 34 Oracle table: seven rows, short cells, large enough to read from the back of the room. */
+.ve-table.oracle-table th, .ve-table.oracle-table td { padding: 12px 18px; font-size: 24px; line-height: 1.22; }
+.ve-table.oracle-table thead th { font-size: 19px; }
+.ve-table.oracle-table tbody th { width: 21%; }
+.reveal .slides section.verification-deck .oracle-table tr.row-focus { transform: none; transition: none; }
+.ve-table.oracle-table tr.row-focus > * { transition: background-color 200ms linear, box-shadow 200ms linear; }
+.ve-table.oracle-table tr.row-focus.current-fragment > * { background: var(--ve-cyan-surface); }
+.ve-table.oracle-table tr.row-focus.current-fragment > th { box-shadow: inset 6px 0 0 var(--ve-cyan); color: var(--ve-cyan); }
+
+/* 26 Tiers: one check type on another, run from the bottom up. The model judge sits apart on top.
+   No numbers: the stack order and one key under it carry the meaning. */
+.tier-figure { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+ol.tiers { display: flex; flex-direction: column-reverse; align-items: center; gap: 8px; width: 1440px; }
+ol.tiers li { display: flex; justify-content: center; align-items: center; padding: 16px 24px; border: 2px solid var(--ve-mint); background: var(--ve-mint-surface); text-align: center; }
+ol.tiers li:nth-child(1) { width: 100%; }
+ol.tiers li:nth-child(2) { width: 88%; }
+ol.tiers li:nth-child(3) { width: 76%; }
+ol.tiers li:nth-child(4) { width: 64%; }
+ol.tiers li:nth-child(5) { width: 52%; }
+ol.tiers li.model { width: 40%; margin-bottom: 26px; border-color: var(--ve-violet); background: var(--ve-cobalt-surface); }
+ol.tiers strong { font-size: 31px; font-weight: 720; line-height: 1.2; }
+ul.tier-key { display: flex; gap: 56px; }
+ul.tier-key li { display: flex; align-items: center; gap: 16px; font-size: 26px; font-weight: 650; }
+ul.tier-key li::before { content: ''; width: 30px; height: 30px; border: 2px solid var(--ve-mint); background: var(--ve-mint-surface); }
+ul.tier-key li.mdl::before { border-color: var(--ve-violet); background: var(--ve-cobalt-surface); }
+
+/* 27 TDD skill: its seven files, one short line each. SKILL.md spans the top row. */
+ul.skill-files { display: grid; grid-template-columns: 1fr 1fr; gap: 0 64px; border-top: 1px solid var(--ve-structure); }
+ul.skill-files li { display: grid; grid-template-columns: 330px minmax(0, 1fr); align-items: baseline; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--ve-structure); font-size: 30px; line-height: 1.3; }
+ul.skill-files li.primary { grid-column: 1 / -1; grid-template-columns: 330px minmax(0, 1fr); }
+ul.skill-files strong { font-weight: 760; }
+.file-name { color: var(--ve-cyan); font: 780 26px/1.2 var(--ve-mono); }
+
+/* 28 Value gate: a new test passes four gates in a row, one question each, and lands in the suite.
+   A mint token runs the rail under the gates once the gates are in place. */
+.gate-flow { display: flex; flex-direction: column; gap: 40px; }
+ol.gate-row { display: grid; grid-template-columns: 190px repeat(4, minmax(0, 1fr)) 190px; column-gap: 56px; align-items: stretch; }
+ol.gate-row > li { position: relative; display: flex; flex-direction: column; justify-content: flex-start; gap: 16px; min-height: 290px; padding: 30px 26px; border: 2px solid var(--ve-cyan); background: var(--ve-ink); }
+ol.gate-row > li + li::before { content: ''; position: absolute; top: 50%; left: -50px; width: 36px; height: 3px; margin-top: -1px; background: var(--ve-cyan); transform-origin: left; }
+ol.gate-row > li + li::after { content: ''; position: absolute; top: 50%; left: -16px; margin-top: -8px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--ve-cyan); }
+ol.gate-row > li.gate-end { align-items: center; justify-content: center; border-style: dashed; border-color: var(--ve-structure); text-align: center; }
+ol.gate-row > li.gate-end.suite { border-style: solid; border-color: var(--ve-mint); background: var(--ve-mint-surface); }
+.gate-kind { color: var(--ve-cyan); font: 780 21px/1 var(--ve-mono); letter-spacing: .08em; }
+ol.gate-row strong { font-size: 30px; font-weight: 720; line-height: 1.22; }
+.gate-rail { position: relative; height: 2px; margin: 0 95px; background: var(--ve-structure); container-type: inline-size; }
+.gate-token { position: absolute; top: -9px; right: -10px; width: 20px; height: 20px; background: var(--ve-mint); }
+
+/* 20 Vertical slices */
+.slice-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.slice { display: flex; flex-direction: column; border: 2px solid var(--ve-structure); background: var(--ve-ink); }
+.slice.reject { border-color: var(--ve-coral); }
+.slice.choose { border-color: var(--ve-mint); }
+.slice-bar { display: flex; align-items: center; gap: 16px; padding: 12px 22px; border-bottom: 1px solid var(--ve-structure); font: 800 20px/1 var(--ve-mono); letter-spacing: .08em; }
+.slice.reject .slice-bar { color: var(--ve-coral); background: var(--ve-coral-surface); }
+.slice.choose .slice-bar { color: var(--ve-mint); background: var(--ve-mint-surface); }
+.verification-deck pre.slice-code { width: 100%; margin: 0; padding: 18px 24px; box-shadow: none; background: transparent; color: var(--ve-white); font: 500 25px/1.5 var(--ve-mono); white-space: pre; overflow: hidden; }
+p.slice-note { padding: 0 24px 18px; color: var(--ve-muted); font-size: 24px !important; line-height: 1.3 !important; }
+
+/* 21 Sourced lines */
+ul.sourced { display: flex; flex-direction: column; gap: 22px; }
+ul.sourced li { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; border-bottom: 1px solid var(--ve-structure); font-size: 27px; line-height: 1.32; }
+ul.sourced li:last-child { border-bottom: 0; padding-bottom: 0; }
+ul.sourced .src-line { color: var(--ve-muted); font: 560 20px/1.3 var(--ve-mono); }
+ul.sourced .rule { font-weight: 760; }
+
+/* 44 Driver table */
+p.table-note { font-size: 26px !important; font-weight: 720; }
+
+/* 48 Evidence fields: five field cards across the full width */
+dl.field-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; }
+dl.field-cards > div { display: flex; flex-direction: column; gap: 18px; min-height: 300px; padding: 34px 30px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+dl.field-cards dt { color: var(--ve-cyan); font: 780 22px/1.2 var(--ve-mono); letter-spacing: .08em; text-transform: uppercase; }
+dl.field-cards dd { color: var(--ve-white); font-size: 32px; font-weight: 680; line-height: 1.25; }
+
+/* 32 Resources */
+ul.reading-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 60px; }
+ul.reading-list li { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--ve-structure); }
+.rl-what { color: var(--ve-muted); font-size: 24px; font-weight: 650; }
+ul.reading-list a { width: fit-content; color: var(--ve-cyan); text-decoration: none; }
+ul.reading-list a code, ul.reading-list .rl-code { font-size: 26px; }
+ul.reading-list .rl-code { color: var(--ve-white); font-family: var(--ve-mono); }
+ul.reading-list a:hover, ul.reading-list a:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+.rl-text { font-size: 25px; line-height: 1.32; }
+.rl-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; color: var(--ve-muted); font-size: 24px; }
+ul.reading-list .rl-inline { color: var(--ve-white); font-size: 22px; }
+ul.reading-list a.rl-inline-link code { font-size: 22px; }
+
+/* 52 Closing */
+.verification-deck .closing-body { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 64px; align-items: center; }
+.closing-main { display: flex; flex-direction: column; gap: 40px; }
+.closing-slide h2 { font-size: 72px; line-height: 1.04; letter-spacing: -.035em; }
+ul.contact { display: flex; flex-direction: column; gap: 18px; }
+ul.contact li { display: grid; grid-template-columns: 64px 1fr; align-items: center; font-size: 28px; }
+ul.contact img.contact-icon { width: 36px; height: 36px; object-fit: contain; }
+
+/* Diagram entry motion, one style for the whole deck: parts appear in reading order with a short fade and a
+   10px rise (340ms each, 75ms apart, ease-out, no bounce), connectors draw along their path, and status icons
+   fade in last. It plays once each time the slide becomes present. Transform and opacity only. */
+@keyframes ve-rise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes ve-fade { from { opacity: 0; } }
+@keyframes ve-draw-x { from { scale: 0 1; } }
+@keyframes ve-draw-y { from { scale: 1 0; } }
+@keyframes ve-grow-y { from { scale: 1 0; } }
+@keyframes ve-grow-x { from { scale: 0 1; } }
+.verification-deck [data-motion] > :nth-child(2) { --i: 1; }
+.verification-deck [data-motion] > :nth-child(3) { --i: 2; }
+.verification-deck [data-motion] > :nth-child(4) { --i: 3; }
+.verification-deck [data-motion] > :nth-child(5) { --i: 4; }
+.verification-deck [data-motion] > :nth-child(6) { --i: 5; }
+.verification-deck [data-motion] > :nth-child(7) { --i: 6; }
+.verification-deck [data-motion] > :nth-child(8) { --i: 7; }
+.verification-deck [data-motion] > :nth-child(9) { --i: 8; }
+.verification-deck.present [data-motion="rise"] > * { animation: ve-rise var(--ve-motion) var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + (var(--o, 0) + var(--i, 0)) * var(--ve-stagger)); }
+
+/* 05 the spine draws down as the rows arrive, then the checks fade in, top to bottom */
+.verification-deck.present ol.pipeline::before { animation: ve-draw-y 900ms var(--ve-ease-out) backwards; animation-delay: var(--ve-motion-start); }
+.verification-deck.present .pipe-ok { animation: ve-fade 300ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 7 * var(--ve-stagger) + 260ms + var(--i, 0) * 70ms); }
+/* 09 nodes rise, arrows draw, then the rejected path and the return path */
+.verification-deck.present .loop-row > .loop-arrow { animation-name: ve-draw-x; transform-origin: left; }
+.verification-deck.present :is(.loop-shortcut, .loop-return) p { animation: ve-fade 340ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 9 * var(--ve-stagger) + 120ms); }
+/* 10 and 12 bars grow from their baseline, values follow */
+.verification-deck.present [data-motion="grow"] :is(.col-bar, .stack-col) { transform-origin: bottom; animation: ve-grow-y 520ms var(--ve-ease-out) backwards; animation-delay: var(--ve-motion-start); }
+.verification-deck.present [data-motion="grow"] .abar-fill { transform-origin: left; animation: ve-grow-x 520ms var(--ve-ease-out) backwards; animation-delay: var(--ve-motion-start); }
+.verification-deck.present [data-motion="grow"] :is(.col-value, .stack-labels, .abar-val) { animation: ve-fade 300ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 400ms); }
+/* 20 the criterion first, then its bus, then the four fields */
+.verification-deck.present .criterion-chip { animation: ve-rise var(--ve-motion) var(--ve-ease-out) backwards; animation-delay: var(--ve-motion-start); }
+.verification-deck.present dl.contract-fields::before { animation: ve-draw-x 360ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 2 * var(--ve-stagger)); }
+.verification-deck dl.contract-fields { --o: 3; }
+/* 21 tiles rise, then each check fades in */
+.verification-deck.present .tile-ok { animation: ve-fade 300ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 4 * var(--ve-stagger) + 260ms + var(--i, 0) * 90ms); }
+/* 26 the key follows the stack */
+.verification-deck.present ul.tier-key { animation: ve-fade 340ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 6 * var(--ve-stagger) + 200ms); }
+/* Connectors between nodes on 28, 39 and 45 draw from left to right as the next node arrives */
+.verification-deck.present :is(ol.gate-row, ol.asset-checks, ol.mini-flow) > li + li::before { animation: ve-draw-x 300ms var(--ve-ease-out) backwards; animation-delay: inherit; transform-origin: left; }
+/* 28 then the token runs the rail into the suite */
+.verification-deck.present .gate-rail { animation: ve-fade 300ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 6 * var(--ve-stagger)); }
+@keyframes ve-pass { from { transform: translateX(-100cqw); } }
+.verification-deck.present .gate-token { animation: ve-pass 1100ms cubic-bezier(.45, 0, .25, 1) backwards; animation-delay: calc(var(--ve-motion-start) + 6 * var(--ve-stagger) + 360ms); }
+/* 31 the map rises, the picture fades in after it */
+.verification-deck.present .real-visual { animation: ve-fade 420ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 3 * var(--ve-stagger)); }
+/* 46 the screenshot and the demo rise, the marks follow left to right, then the chosen mark's ring settles in with the
+   easing and length OpenAI's choice demo uses for its lane change (900ms, cubic-bezier(.33, 0, .67, 1)), and the answers fade in last */
+.verification-deck.present .som { animation: ve-rise var(--ve-motion) var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + (2 + var(--k, 0)) * var(--ve-stagger)); }
+.verification-deck.present .som.chosen::after { animation: ve-fade 900ms cubic-bezier(.33, 0, .67, 1) backwards; animation-delay: calc(var(--ve-motion-start) + 6 * var(--ve-stagger) + 120ms); }
+.verification-deck.present .q-answer { animation: ve-fade 300ms var(--ve-ease-out) backwards; animation-delay: calc(var(--ve-motion-start) + 6 * var(--ve-stagger) + 260ms + var(--i, 0) * 90ms); }
+
+/* 03 and 34 click-through reveals use the same rise as the diagrams */
+.reveal .slides section.verification-deck .fragment { transform: translateY(10px); transition: opacity var(--ve-motion) var(--ve-ease-out), transform var(--ve-motion) var(--ve-ease-out), visibility 0s; }
+.verification-deck.ve-restart *, .verification-deck.ve-restart *::before, .verification-deck.ve-restart *::after { animation: none !important; }
+.reveal .slides section.verification-deck .fragment.visible { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .verification-deck *, .verification-deck *::before, .verification-deck *::after { transition-duration: .001ms !important; animation: none !important; }
+  .reveal .slides section.verification-deck .fragment { opacity: 1; visibility: visible; transform: none; }
+}
+
+html.print-pdf .reveal .slides section.slide-frame.verification-deck { padding: 72px 96px !important; }
+html.print-pdf .verification-deck .slide-body { overflow: hidden; }
+html.print-pdf .verification-deck pre.prompt-body { user-select: text; }
+html.print-pdf .reveal .slides section.verification-deck .fragment { opacity: 1; visibility: visible; transform: none; }
+html.print-pdf .ve-table.oracle-table tr.row-focus > * { background: none; box-shadow: none; color: inherit; }
+html.print-pdf .verification-deck *, html.print-pdf .verification-deck *::before, html.print-pdf .verification-deck *::after { animation: none !important; transition: none !important; }
+
+/* 31 No mocks: where each kind of test runs, next to the generated real-services picture */
+.real-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+dl.real-map { display: grid; gap: 0; border: 2px solid var(--ve-mint); background: var(--ve-mint-surface); }
+dl.real-map > div { display: flex; flex-direction: column; gap: 10px; padding: 30px 36px; }
+dl.real-map > div + div { border-top: 1px solid var(--ve-mint); }
+dl.real-map dt { color: var(--ve-mint); font-size: 30px; font-weight: 780; }
+dl.real-map dd { margin: 0; color: var(--ve-white); font-size: 36px; font-weight: 650; line-height: 1.25; }
+.real-visual { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border: 1px solid var(--ve-structure); }
+
+/* 33 Closing: thesis and Alex's contact details */
+.speaker-card { display: flex; flex-direction: column; gap: 6px; padding-top: 28px; border-top: 3px solid var(--ve-cyan); }
+p.speaker-card-name { font-size: 44px !important; font-weight: 800; line-height: 1.1 !important; }
+p.speaker-card-role { color: var(--ve-muted); font-size: 30px !important; font-weight: 640; margin-bottom: 18px !important; }
+.verification-deck#closing-qa ul.contact li { grid-template-columns: 64px minmax(0, 1fr); font-size: 30px; }
+.verification-deck#closing-qa ul.contact a { color: var(--ve-white); text-decoration: none; }
+.verification-deck#closing-qa ul.contact code { white-space: nowrap; }
+
+/* Prompt slides: the composer alone, centered under its title at a comfortable reading width. */
+.prompt-solo { width: 1320px; max-width: 100%; align-self: center; }
+.prompt-solo pre.prompt-body { font-size: 28px; line-height: 1.5; }
+.prompt-solo:has(.live-prompt) { width: 1600px; }
+.verification-deck .prompt-solo .live-prompt pre.prompt-body { padding: 20px 30px 8px; font-size: 22px; line-height: 1.3; }
+.verification-deck .footnote { color: var(--ve-muted); }
+
+/* 11 Read-only permission next to the way-out prompt */
+.perm-card { display: flex; flex-direction: column; gap: 22px; padding: 36px 40px; border: 1px solid var(--ve-structure); background: var(--ve-mint-surface); }
+.perm-card .status-chip { font-size: 19px; }
+p.perm-lead { font-size: 46px !important; font-weight: 780; line-height: 1.12 !important; letter-spacing: -.015em; }
+p.perm-note { color: var(--ve-muted); font-size: 28px !important; line-height: 1.3 !important; }
+
+.verification-deck#read-only-tests .split { align-items: stretch; }
+.verification-deck#read-only-tests .prompt-window pre.prompt-body { flex: 1; }
+/* 12 One line under the chart */
+p.slop-line { font-size: 40px !important; font-weight: 780; line-height: 1.2 !important; }
+
+/* 17 Six items in two columns */
+ul.plain.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 64px; }
+ul.plain.two-col li { font-size: 36px; }
+
+/* 18 Expected and unexpected lane switch. Both tracks start the same: player in the middle lane, bottom row,
+   train in the middle lane, top row (--train-start). Both trains move at the same speed, so the shorter
+   unexpected run takes 780ms against the expected 1200ms. The resting state is the end state, so reduced
+   motion and print show it. */
+.lane-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.lane-case { display: flex; flex-direction: column; gap: 20px; padding: 24px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+.lane-track { --lane: calc((100cqw - 16px) / 3); --train-start: 6px; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; aspect-ratio: 1; container-type: inline-size; }
+.lane { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lane > span { border-radius: 6px; background: var(--ve-ink); }
+.lane-goal { position: absolute; top: calc(var(--lane) * .3); left: calc(var(--lane) * .4); width: calc(var(--lane) * .26); height: calc(var(--lane) * .4); }
+.lane-goal::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; border-radius: 2px; background: var(--ve-structure); }
+.lane-goal::after { content: ''; position: absolute; top: 0; left: 4px; right: 0; height: 52%; background: var(--ve-mint); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.lane-train { position: absolute; left: calc(var(--lane) * 1.1 + 8px); width: calc(var(--lane) * .8); height: calc(100cqw / 3 - 12px); border-radius: 6px; background: var(--ve-structure); }
+.lane-runner { position: absolute; top: calc(100cqw * 5 / 6 - var(--lane) * .25); width: calc(var(--lane) * .5); aspect-ratio: 1; border-radius: 50%; background: var(--ve-mint); }
+.lane-case.expected .lane-train { top: calc(100cqw * 2 / 3 + 6px); }
+.lane-case.expected .lane-runner { left: calc(var(--lane) * .25); }
+.lane-case.unexpected .lane-train { top: calc(100cqw / 2 - var(--lane) * .25 + 12px); }
+.lane-case.unexpected .lane-runner { left: calc(var(--lane) * 1.25 + 8px); }
+.lane-runner::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--ve-coral); opacity: 0; }
+.lane-case.unexpected .lane-runner::after { opacity: 1; }
+.lane-case figcaption { display: flex; flex-direction: column; gap: 6px; color: var(--ve-muted); font-size: 24px; line-height: 1.3; }
+.lane-case figcaption strong { display: flex; align-items: center; gap: 12px; font: 780 21px/1.2 var(--ve-mono); letter-spacing: .06em; text-transform: uppercase; }
+.lane-case.expected figcaption strong { color: var(--ve-mint); }
+.lane-case.unexpected figcaption strong { color: var(--ve-coral); }
+.lane-mark { width: 26px; height: 26px; }
+.verification-deck#criteria-in-practice .example-box p { font-size: 34px; }
+@keyframes ve-train-two-rows { from { transform: translateY(calc(var(--train-start) - 100cqw * 2 / 3 - 6px)); } }
+@keyframes ve-train-one-row { from { transform: translateY(calc(var(--train-start) - (100cqw / 2 - var(--lane) * .25 + 12px))); } }
+@keyframes ve-lane-left { from { transform: translateX(calc(var(--lane) + 8px)); } }
+@keyframes ve-pulse { 50% { transform: scale(1.12); } }
+.verification-deck.present .lane-case.expected .lane-train { animation: ve-train-two-rows 1200ms linear 200ms backwards; }
+.verification-deck.present .lane-case.unexpected .lane-train { animation: ve-train-one-row 780ms linear 200ms backwards; }
+.verification-deck.present .lane-case.expected .lane-runner { animation: ve-lane-left 250ms cubic-bezier(.22, 1, .36, 1) 300ms backwards; }
+.verification-deck.present .lane-case.unexpected .lane-runner { animation: ve-pulse 320ms ease-in-out 980ms; }
+.verification-deck.present .lane-case.unexpected .lane-runner::after { animation: ve-fade 200ms ease-out 980ms backwards; }
+.verification-deck.present .lane-case.expected .lane-mark { animation: ve-fade 300ms ease-out 1400ms backwards; }
+.verification-deck.present .lane-case.unexpected .lane-mark { animation: ve-fade 300ms ease-out 1200ms backwards; }
+
+/* 20 Test contract: an example criterion, a bus, and its four fields across the full width */
+.contract-flow { display: flex; flex-direction: column; align-items: center; }
+p.criterion-chip { position: relative; display: flex; align-items: center; gap: 22px; padding: 22px 34px; border: 2px solid var(--ve-cyan); background: var(--ve-cyan-surface); font-size: 34px !important; font-weight: 700; line-height: 1.2 !important; }
+p.criterion-chip::after { content: ''; position: absolute; top: 100%; left: 50%; width: 2px; height: 46px; margin-left: -1px; background: var(--ve-structure); }
+.chip-tag { padding: 8px 10px; border: 1px solid currentColor; color: var(--ve-cyan); font: 780 21px/1 var(--ve-mono); letter-spacing: .08em; }
+dl.contract-fields { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; width: 100%; margin-top: 92px; }
+dl.contract-fields::before { content: ''; position: absolute; top: -46px; left: calc((100% - 96px) / 8); right: calc((100% - 96px) / 8); height: 2px; background: var(--ve-structure); }
+dl.contract-fields > div { position: relative; display: flex; flex-direction: column; gap: 18px; min-height: 250px; padding: 34px 32px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+dl.contract-fields > div::before { content: ''; position: absolute; bottom: 100%; left: 50%; width: 2px; height: 46px; margin-left: -1px; background: var(--ve-structure); }
+dl.contract-fields dt { color: var(--ve-cyan); font: 780 22px/1.2 var(--ve-mono); letter-spacing: .08em; }
+dl.contract-fields dd { color: var(--ve-white); font-size: 34px; font-weight: 700; line-height: 1.22; }
+dl.contract-fields dd code { color: var(--ve-white); font-size: 26px; font-weight: 600; }
+
+/* 21 Contract review: four check tiles, two by two */
+ul.check-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+ul.check-tiles li { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 30px; min-height: 210px; padding: 36px 44px; border: 1px solid var(--ve-structure); background: var(--ve-panel); font-size: 40px; font-weight: 700; line-height: 1.2; }
+.tile-ok { width: 56px; height: 56px; }
+
+/* 23 Instruction file next to tool */
+.tool-compare.row { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.tool-compare.row .tool-col { gap: 24px; padding: 32px 36px; }
+.tool-compare.row ul.plain li { font-size: 34px; }
+
+
+
+.verification-deck#checkin-3 ol.asset-checks { width: 100%; }
+
+/* 41 and 42 share one table grid */
+.verification-deck table.env-table th, .verification-deck table.env-table td { padding: 22px 26px; font-size: 32px; }
+.verification-deck table.env-table thead th { font-size: 21px; }
+.verification-deck table.env-table tbody th { width: 34%; }
+
+/* 44 Driver table */
+.verification-deck#agents-as-users .ve-table th, .verification-deck#agents-as-users .ve-table td { padding: 18px 22px; font-size: 28px; }
+.verification-deck#agents-as-users .ve-table thead th { font-size: 20px; }
+.verification-deck#agents-as-users .ve-table td.mono { font-size: 27px; }
+
+/* 45 Jev postcondition flow: three nodes in a row, then a fork from Probability into HIGH and LOW. */
+ol.mini-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.4fr); align-items: center; column-gap: 64px; }
+ol.mini-flow > li { position: relative; }
+ol.mini-flow > li + li::before { content: ''; position: absolute; top: 50%; left: -56px; width: 42px; height: 3px; background: var(--ve-cyan); transform: translateY(-50%); }
+ol.mini-flow > li.flow-node + li.flow-node::after { content: ''; position: absolute; top: 50%; left: -16px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--ve-cyan); transform: translateY(-50%); }
+li.flow-node { align-self: center; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 30px 32px; border: 2px solid var(--ve-cyan); background: var(--ve-ink); }
+li.flow-node.jev { border-color: var(--ve-violet); background: var(--ve-cobalt-surface); }
+.flow-kind { color: var(--ve-muted); font: 780 20px/1 var(--ve-mono); letter-spacing: .06em; }
+li.flow-node strong { font-size: 36px; line-height: 1.1; }
+li.flow-branches { display: grid; grid-auto-rows: 1fr; row-gap: 28px; padding-left: 44px; }
+ol.mini-flow > li.flow-branches::before { left: -56px; width: 59px; }
+li.flow-branches::after { content: ''; position: absolute; top: calc((100% - 28px) / 4); bottom: calc((100% - 28px) / 4); left: 0; width: 3px; background: var(--ve-cyan); }
+p.branch { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 10px; margin: 0 !important; padding: 22px 28px; border: 2px solid var(--ve-mint); background: var(--ve-mint-surface); font-size: 28px !important; font-weight: 700; line-height: 1.25 !important; }
+p.branch::before { content: ''; position: absolute; top: 50%; left: -44px; width: 30px; height: 3px; background: var(--ve-cyan); transform: translateY(-50%); }
+p.branch::after { content: ''; position: absolute; top: 50%; left: -16px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--ve-cyan); transform: translateY(-50%); }
+p.branch span { color: var(--ve-mint); font: 780 20px/1 var(--ve-mono); letter-spacing: .06em; }
+p.branch.low { border-color: var(--ve-structure); background: var(--ve-panel); }
+p.branch.low span { color: var(--ve-muted); }
+
+/* 46 Decisions API: a labelled screenshot of OpenAI's guide (marks drawn over it, set-of-marks style),
+   next to OpenAI's own choice demo, recorded from the same page. The screenshot is grayscale so cyan stays the one accent. */
+.decide-split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 48px; align-items: stretch; }
+.decide-shot { display: flex; flex-direction: column; gap: 22px; margin: 0; }
+.shot-frame { padding: 16px; border: 1px solid var(--ve-structure); background: var(--ve-void); }
+.shot-canvas { position: relative; }
+.shot-img { display: block; width: 100%; height: auto; }
+.som { position: absolute; top: 28.2%; height: 5.6%; border: 2px solid var(--ve-muted); }
+.som b { position: absolute; bottom: calc(100% + 6px); left: -2px; display: grid; place-items: center; width: 34px; height: 34px; background: var(--ve-muted); color: var(--ve-void); font: 800 21px/1 var(--ve-mono); }
+.som-a { left: 3.07%; width: 6.25%; --k: 0; }
+.som-b { left: 9.55%; width: 11.82%; --k: 1; }
+.som-c { left: 21.59%; width: 15.45%; --k: 2; }
+.som-d { left: 82.16%; width: 14.09%; --k: 3; }
+.som.chosen { border: 3px solid var(--ve-cyan); }
+.som.chosen b { background: var(--ve-cyan); }
+.som.chosen::after { content: ''; position: absolute; inset: -9px; border: 2px solid var(--ve-cyan); opacity: .55; }
+.decide-side { display: flex; flex-direction: column; gap: 26px; }
+.decide-side .decide-q { margin-top: auto !important; }
+.oai-demo { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.oai-video { display: block; box-sizing: border-box; width: 100%; height: auto; padding: 16px; border: 1px solid var(--ve-structure); background: var(--ve-void); object-fit: cover; }
+.decide-q { display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'type .' 'question answer'; gap: 10px 24px; align-items: last baseline; margin: 0 !important; padding: 24px 28px; border: 1px solid var(--ve-structure); background: var(--ve-ink); }
+.q-type { grid-area: type; color: var(--ve-cyan); font: 780 21px/1 var(--ve-mono); letter-spacing: .06em; }
+.decide-q strong { grid-area: question; font-size: 34px; line-height: 1.2; }
+.q-answer { grid-area: answer; color: var(--ve-cyan); font: 780 30px/1 var(--ve-mono); }
+p.fact-line { color: var(--ve-muted); font: 650 24px/1.3 var(--ve-mono) !important; letter-spacing: .03em; }
+
+
+
+/* 50 Atomic */
+ul.plug-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+ul.plug-grid li { display: flex; flex-direction: column; gap: 12px; padding: 30px 36px; border: 1px solid var(--ve-structure); background: var(--ve-panel); }
+ul.plug-grid strong { font-size: 42px; font-weight: 800; letter-spacing: -.015em; }
+ul.plug-grid span { color: var(--ve-muted); font-size: 30px; line-height: 1.3; }
+p.plug-link { display: flex; align-items: baseline; gap: 24px; }
+p.plug-link span { color: var(--ve-cyan); font: 760 21px/1 var(--ve-mono); letter-spacing: .08em; }
+p.plug-link a { color: var(--ve-white); text-decoration: none; font-size: 34px; }
+
+/* Round 5: fewer words per slide, so the remaining text runs larger */
+.verification-deck#green-not-correct .stack { gap: 64px; }
+.verification-deck#acceptance-criteria ul.plain.two-col li { font-size: 40px; }
+.verification-deck#atomic-tools .ve-table th, .verification-deck#atomic-tools .ve-table td { padding: 18px 24px; font-size: 30px; }
+.verification-deck#atomic-tools .ve-table thead th { font-size: 20px; }
+.verification-deck#atomic-tools .ve-table td.mono { font-size: 29px; }
+
+/* 24 Tool logos next to each tool name. Logos are the owners' marks, shown in grayscale so the slide keeps one accent. */
+.tool-set { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 30px; }
+.tool { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+.tool img { width: 40px; height: 40px; object-fit: contain; filter: grayscale(1); }
+.tool.mono { color: var(--ve-cyan); font-family: var(--ve-mono); font-size: 29px; }
+.tool.plain-name { gap: 14px; color: var(--ve-muted); }
+
+/* 41 and 42 share one table grid and one top edge: both start right under the title. */
+.verification-deck:is(#production-circles, #enforced-in-code) .slide-body::before { flex-grow: 0; }
+.verification-deck:is(#oracle-qualities, #independent-review) ul.principle-list li { padding: 34px 0; }
+.verification-deck:is(#oracle-qualities, #independent-review) ul.principle-list strong { font-size: 34px; font-weight: 700; }
+
+/* Sparse slides: larger content fills the frame under the title instead of leaving an empty lower half. */
+.verification-deck#framing ol.phase-rail li { gap: 26px; padding-top: 60px; }
+.verification-deck#framing ol.phase-rail strong { font-size: 46px; line-height: 1.2; }
+.verification-deck#framing .phase-name { font-size: 26px; }
+.verification-deck#demo-pipeline ol.pipeline { gap: 16px; }
+.verification-deck#demo-pipeline ol.pipeline li.pipe-step { padding-block: 12px; }
+.verification-deck#check-outside-agent .loop-node { min-height: 300px; gap: 22px; padding: 38px 28px 30px; }
+.verification-deck#check-outside-agent .loop-node strong { font-size: 38px; }
+.verification-deck#check-outside-agent .loop-node span { font-size: 22px; }
+.verification-deck#read-only-tests p.perm-lead { font-size: 54px !important; }
+.verification-deck#read-only-tests p.perm-note { font-size: 32px !important; }
+.verification-deck#read-only-tests .perm-card { gap: 30px; padding: 48px 48px; }
+.verification-deck#read-only-tests pre.prompt-body { font-size: 30px; line-height: 1.5; }
+.verification-deck#oracles-drift .evidence-pair.compact .evidence-card { gap: 40px; padding: 52px 52px; min-height: 420px; }
+.verification-deck#oracles-drift .evidence-pair.compact blockquote p { font-size: 46px; line-height: 1.22; }
+.verification-deck#acceptance-criteria ul.plain.two-col { gap: 44px 80px; }
+.verification-deck#acceptance-criteria ul.plain.two-col li { font-size: 46px; padding-left: 44px; }
+.verification-deck#acceptance-criteria ul.plain.two-col li::before { width: 16px; height: 16px; }
+.verification-deck#criteria-in-practice .split { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.verification-deck#contract-review ul.check-tiles li { min-height: 270px; }
+.verification-deck#tools-not-instructions .tool-compare.row .tool-col { gap: 36px; min-height: 420px; padding: 48px 52px; }
+.verification-deck#tools-not-instructions .tool-compare.row ul.plain { gap: 24px; }
+.verification-deck#tools-not-instructions .tool-compare.row ul.plain li { font-size: 44px; padding-left: 40px; }
+.verification-deck#value-gate ol.gate-row > li { min-height: 360px; }
+.verification-deck#value-gate ol.gate-row strong { font-size: 32px; }
+.verification-deck#vertical-slices pre.slice-code { padding: 32px 30px; font-size: 31px; line-height: 1.6; }
+.verification-deck#vertical-slices p.slice-note { padding: 0 30px 32px; font-size: 34px !important; }
+.verification-deck#vertical-slices .slice-bar { padding: 18px 30px; font-size: 22px; }
+.verification-deck#independent-review ul.principle-list li { padding: 46px 0; }
+.verification-deck#independent-review ul.principle-list strong { font-size: 40px; }
+.verification-deck#jev-postconditions li.flow-node { min-height: 280px; padding: 40px 36px; }
+.verification-deck#jev-postconditions li.flow-node strong { font-size: 42px; }
+.verification-deck#jev-postconditions p.branch { padding: 32px 32px; font-size: 32px !important; }
+.verification-deck#pr-evidence dl.field-cards > div { min-height: 380px; padding: 40px 32px; }
+.verification-deck#pr-evidence dl.field-cards dd { font-size: 36px; }
+.verification-deck#atomic-plug ul.plug-grid li { gap: 16px; padding: 48px 48px; }
+.verification-deck#atomic-plug ul.plug-grid strong { font-size: 50px; }
+.verification-deck#atomic-plug ul.plug-grid span { font-size: 34px; }
+.verification-deck#production-circles table.env-table th, .verification-deck#production-circles table.env-table td,
+.verification-deck#enforced-in-code table.env-table th, .verification-deck#enforced-in-code table.env-table td { padding-block: 30px; font-size: 34px; }
+.verification-deck:is(#production-circles, #enforced-in-code) table.env-table thead th { padding-block: 22px; font-size: 21px; }
+.verification-deck .nowrap { white-space: nowrap; }
+.verification-deck#criteria-in-practice .split { grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); gap: 48px; }
+.verification-deck#criteria-in-practice .lane-case figcaption { font-size: 28px; }
+.verification-deck#criteria-in-practice .lane-case figcaption strong { font-size: 24px; }
+.verification-deck#test-contract dl.contract-fields > div { min-height: 330px; padding: 40px 34px; }
+.verification-deck#test-contract dl.contract-fields dd { font-size: 40px; }
+.verification-deck#test-contract dl.contract-fields dd code { font-size: 28px; }
+.verification-deck#test-contract p.criterion-chip { padding: 28px 40px; font-size: 40px !important; }
+.verification-deck#vertical-slices .slice-pair { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+.verification-deck#vertical-slices pre.slice-code { font-size: 38px; }
+.verification-deck#real-services dl.real-map > div { padding: 44px 40px; }
+.verification-deck#independent-review ul.principle-list li { padding: 60px 0; }
+.verification-deck#independent-review ul.principle-list strong { font-size: 44px; }
+.verification-deck#checkin-3 ol.asset-checks li { min-height: 470px; gap: 26px; padding: 48px 42px; }
+.verification-deck#checkin-3 ol.asset-checks strong { font-size: 44px; }
+.verification-deck#checkin-3 ol.asset-checks li > span:last-child { font-size: 32px; }
+.verification-deck#jev-postconditions li.flow-node { min-height: 400px; gap: 22px; }
+.verification-deck#jev-postconditions li.flow-node strong { font-size: 48px; }
+.verification-deck#jev-postconditions .flow-kind { font-size: 22px; }
+.verification-deck#jev-postconditions li.flow-branches { row-gap: 40px; }
+.verification-deck#jev-postconditions p.branch { min-height: 180px; padding: 36px 34px; font-size: 36px !important; }
+.verification-deck#vertical-slices pre.slice-code { padding: 22px 30px; font-size: 32px; line-height: 1.45; }
+.verification-deck#vertical-slices p.slice-note { padding: 0 30px 24px; font-size: 30px !important; }

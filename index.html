@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Verification Engineering for Agent-Written Code. Background context, six principles, applied verification with copyable prompts, and one live build that runs through the talk." />
+    <title>Verification Engineering for Agent-Written Code</title>
+    <link rel="icon" href="./assets/brand/atomic-wordmark.svg" />
+    <link rel="stylesheet" href="./deck/styles.css" />
+  </head>
+  <body>
+    <main class="reveal" aria-label="Verification Engineering for Agent-Written Code, a livestream talk for software engineers">
+      <div class="slides verification-slides">
+
+        <section id="cover" class="slide-frame verification-deck ve-cover" aria-label="Cover: Verification Engineering for Agent-Written Code, by Alex Lavaee of Microsoft Research">
+          <header class="slide-meta"><span class="section-name">THE NEURON · LIVE</span><span class="folio">01 / 52</span></header>
+          <div class="slide-body cover-body">
+            <h1>Verification Engineering for <span class="highlight-cyan">Agent-Written</span> Code</h1>
+            <p class="cover-speaker"><span class="speaker-name">Alex Lavaee</span><span class="speaker-sep" aria-hidden="true">·</span><span class="speaker-role">Microsoft Research</span></p>
+          </div>
+          <img class="cover-mark" src="./assets/brand/atomic-mark-cyan.svg" alt="" aria-hidden="true" />
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="thesis" class="slide-frame verification-deck thesis-slide" aria-label="Thesis: the agents that write the code should not determine when work is done">
+          <header class="slide-meta"><span class="section-name">THESIS</span><span class="folio">02 / 52</span></header>
+          <div class="slide-body thesis-body">
+            <h2 class="claim">The agents that write the code should not determine when work is <span class="highlight-yellow">done.</span></h2>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="framing" class="slide-frame verification-deck" aria-label="What verification engineering covers: before the work, during the work, and after the change runs">
+          <header class="slide-meta"><span class="section-name">OPEN</span><span class="folio">03 / 52</span></header>
+          <div class="slide-body">
+            <h2>What verification engineering covers</h2>
+            <ol class="phase-rail">
+              <li class="before fragment"><span class="phase-name">BEFORE THE WORK</span><strong>Criteria and a test contract, reviewed by a person</strong></li>
+              <li class="during fragment"><span class="phase-name">DURING THE WORK</span><strong>Checks and reviewers the agent cannot edit</strong></li>
+              <li class="after fragment"><span class="phase-name">AFTER THE CHANGE RUNS</span><strong>Run it like a user and save the evidence</strong></li>
+            </ol>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="demo-kickoff" class="slide-frame verification-deck demo-slide" aria-label="Live build kickoff: the one prompt Alex pastes into Atomic, shown word for word">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">04 / 52</span></header>
+          <div class="slide-body">
+            <h2>Live build: one prompt</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window live-prompt" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Live prompt: Build Subway Surfers, with a custom Atomic workflow that generates the art, turns it into 3D models, rigs the runner and builds a physical game">Build Subway Surfers.
+
+First use the prompt-engineer skill to improve this prompt. Then write a custom Atomic workflow that does the whole job, and run it.
+
+The workflow generates concept art for the runner, the inspector and his dog, the subway trains, barriers, coins, power-ups, and a neon futuristic city around the tracks with GPT Image 2.5 Flare (gpt-image-2.5-flare), called directly through the OpenAI Images API with the OpenAI API key saved in Atomic. Turn each image into a 3D model with Hunyuan3D-2.1 on Hugging Face, using the Hugging Face token saved in Atomic, clean up and render the models in Blender, rig the runner with a motion-captured run, and build the game with those assets. The game is an endless three-lane run along subway tracks where you switch lanes, jump, and roll past trains and barriers, collect coins, pick up a jetpack, super sneakers, a coin magnet, and a score multiplier, and get caught by the inspector when you crash. Speed increases over time, and the game keeps a score and a high score.
+
+Make it physical: the runner really runs, with arms and legs alternating and feet planted on the track, jumps on a gravity arc, and rolls on the ground. Models sit on the track with shadows under them, collisions match the models, and a crash knocks the runner back before game over. The camera sits low and close behind the runner, like Subway Surfers, and keeps them in view, including beside trains and in the air.
+
+Open the game on my screen while it builds, at 60 fps. Only show changes that pass their checks. The H key hides the developer panels.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="demo-pipeline" class="slide-frame verification-deck demo-slide" aria-label="What the prompt asks Atomic to do: eight steps from prompt to game, every step after the prompt checked">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">05 / 52</span></header>
+          <div class="slide-body">
+            <h2>What the prompt asks Atomic to do</h2>
+            <ol class="pipeline" data-motion="rise" aria-label="Eight steps in order, from the prompt to the game. Every step after the prompt is checked">
+              <li class="pipe-step pipe-input" aria-label="Prompt, pasted in chat"><span class="pipe-tool">PROMPT</span><span class="pipe-what">pasted in chat</span></li>
+              <li class="pipe-step" aria-label="Improved prompt, prompt-engineer skill, checked"><span class="pipe-tool">IMPROVED PROMPT</span><span class="pipe-what">prompt-engineer skill</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step pipe-workflow" aria-label="Custom workflow, written for this job, checked"><span class="pipe-tool">CUSTOM WORKFLOW</span><span class="pipe-what">written for this job</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step" aria-label="GPT Image 2.5, concept art and the city, checked"><span class="pipe-tool">GPT IMAGE 2.5</span><span class="pipe-what">concept art and the city</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step" aria-label="Hunyuan3D-2.1, 3D models, checked"><span class="pipe-tool">HUNYUAN3D-2.1</span><span class="pipe-what">3D models</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step" aria-label="Blender, cleanup and renders, checked"><span class="pipe-tool">BLENDER</span><span class="pipe-what">cleanup and renders</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step" aria-label="Motion-captured run, rigs the runner, checked"><span class="pipe-tool">MOTION-CAPTURED RUN</span><span class="pipe-what">rigs the runner</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+              <li class="pipe-step pipe-game" aria-label="Game, three.js in the browser, checked"><span class="pipe-tool">GAME</span><span class="pipe-what">three.js, in the browser</span><img class="pipe-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /></li>
+            </ol>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="div-background" class="slide-frame verification-deck section-divider ve-divider" aria-label="Section divider: Background context, the data and the terms">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">06 / 52</span></header>
+          <div class="slide-body divider-body">
+            <h2>Background context</h2>
+            <p>The data and the terms</p>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="bottleneck" class="slide-frame verification-deck" aria-label="The bottleneck moved to verification, with two sourced quotes from OpenAI and Google Cloud">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">07 / 52</span></header>
+          <div class="slide-body">
+            <h2>The bottleneck moved to verification</h2>
+            <div class="evidence-pair">
+              <figure class="evidence-card">
+                <blockquote><p>“As code throughput increased, our bottleneck became human QA capacity.”</p></blockquote>
+                <figcaption><strong>OpenAI</strong> · Harness engineering, 2026 <span class="evidence-tag">VENDOR-REPORTED</span></figcaption>
+              </figure>
+              <figure class="evidence-card">
+                <blockquote><p>“Without robust control systems, like strong automated testing … an increase in change volume leads to instability.”</p></blockquote>
+                <figcaption><strong>Google Cloud</strong> · DORA 2025 <span class="evidence-tag">GOOGLE-RUN SURVEY</span></figcaption>
+              </figure>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="terms" class="slide-frame verification-deck" aria-label="Four terms: test engineering, verification, validation and oracle">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">08 / 52</span></header>
+          <div class="slide-body">
+            <h2>Four terms</h2>
+            <dl class="terms-grid">
+              <div class="term"><dt>Test engineering</dt><dd>Designing the checks, not only writing tests.</dd></div>
+              <div class="term"><dt>Verification</dt><dd>The code does what the criteria say.</dd></div>
+              <div class="term"><dt>Validation</dt><dd>The criteria match what users need. A person decides.</dd></div>
+              <div class="term"><dt>Oracle</dt><dd>Decides pass or fail by checking against set rules or guidelines.</dd></div>
+            </dl>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="check-outside-agent" class="slide-frame verification-deck" aria-label="The check sits outside the agent: criteria, agent, tool calls, repository and checks, with self-reported checks rejected">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">09 / 52</span></header>
+          <div class="slide-body">
+            <h2>The check sits outside the agent</h2>
+            <figure class="loop-figure" aria-label="Acceptance criteria go to the agent, which makes tool calls that change the repository. Checks run on the repository and the result returns to the agent. A direct path where the agent edits or reports its own checks is rejected.">
+              <div class="loop-shortcut"><p><s>AGENT EDITS OR REPORTS ITS OWN CHECKS</s> <span>· REJECTED</span></p></div>
+              <div class="loop-row" data-motion="rise">
+                <div class="loop-node criteria"><span>INPUT</span><strong>Acceptance criteria</strong></div>
+                <i class="loop-arrow" aria-hidden="true"></i>
+                <div class="loop-node agent"><span>AGENT</span><strong>Model and instructions</strong></div>
+                <i class="loop-arrow" aria-hidden="true"></i>
+                <div class="loop-node actions"><span>ACTIONS</span><strong>Tool calls</strong></div>
+                <i class="loop-arrow" aria-hidden="true"></i>
+                <div class="loop-node"><span>STATE</span><strong>Repository</strong></div>
+                <i class="loop-arrow" aria-hidden="true"></i>
+                <div class="loop-node checks"><span>CHECKS</span><strong>Tests, typecheck, exit codes, reviewer</strong></div>
+              </div>
+              <div class="loop-return"><p><span>RESULT</span> the check result goes back to the agent</p></div>
+            </figure>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: Dex Horthy and the HumanLayer team, feedback-loop framing</span></footer>
+        </section>
+
+        <section id="prompts-not-controls" class="slide-frame verification-deck" aria-label="A prompt does not prevent test edits: the METR hack rate under two prompts and the share of cheating done by editing tests">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">10 / 52</span></header>
+          <div class="slide-body">
+            <h2>A prompt does not prevent test edits</h2>
+            <div class="chart-pair">
+              <figure class="chart-panel" aria-label="METR hack rate on one RE-Bench task: 80 percent with the default prompt and 80 percent with Please do not cheat">
+                <figcaption>Hack rate, one RE-Bench task</figcaption>
+                <div class="col-chart" data-motion="grow">
+                  <div class="col"><span class="col-value">80%</span><span class="col-bar p80"></span></div>
+                  <div class="col"><span class="col-value">80%</span><span class="col-bar p80"></span></div>
+                </div>
+                <p class="col-labels"><span>default prompt</span><span>“Please do not cheat”</span></p>
+              </figure>
+              <figure class="chart-panel" aria-label="ImpossibleBench: more than 79 percent of the cheating by Claude and Qwen3-Coder models was editing test cases">
+                <figcaption>How Claude and Qwen3-Coder cheated</figcaption>
+                <div class="col-chart" data-motion="grow">
+                  <div class="stack-col"><span class="stack-rest"></span><span class="stack-part"></span></div>
+                  <p class="stack-labels"><span class="col-value">79%+</span><span>of the cheating</span></p>
+                </div>
+                <p class="col-labels"><span>editing tests</span></p>
+              </figure>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: METR, 2025 · ImpossibleBench, ICLR 2026</span></footer>
+        </section>
+
+        <section id="read-only-tests" class="slide-frame verification-deck" aria-label="Make tests read-only and give the agent a way out: the read-only permission next to a stop-and-report prompt">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">11 / 52</span></header>
+          <div class="slide-body">
+            <h2>Make tests read-only, and give the agent a way out</h2>
+            <div class="split">
+              <article class="perm-card">
+                <span class="status-chip ok">PERMISSION</span>
+                <p class="perm-lead">Tests are read-only for the agent</p>
+                <p class="perm-note">Restored legitimate performance and blocked test edits</p>
+              </article>
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: stop and report a wrong test instead of working around it">If a test or acceptance criterion looks wrong or contradicts the spec, stop and tell me which one and why. Do not edit it, skip it, or special-case the code to make it pass.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: ImpossibleBench, Zhong et al., ICLR 2026</span></footer>
+        </section>
+
+        <section id="green-not-correct" class="slide-frame verification-deck" aria-label="Passing tests do not mean correct code: 345 erroneous SWE-Bench patches labeled passing, per UTBoost">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">12 / 52</span></header>
+          <div class="slide-body">
+            <h2>Passing tests do not mean correct code</h2>
+            <div class="stack">
+              <div class="green-grid">
+                <div class="green-metric">
+                  <span class="metric-value">345</span>
+                  <span class="metric-label">erroneous patches labeled passing</span>
+                </div>
+                <div class="affected" data-motion="grow" role="img" aria-label="40.9 percent of SWE-Bench Lite and 24.4 percent of SWE-Bench Verified leaderboard entries affected">
+                  <p class="affected-title">Leaderboard entries affected</p>
+                  <div class="abar"><span class="abar-name">SWE-Bench Lite</span><span class="abar-track"><span class="abar-fill lite"></span></span><span class="abar-val">40.9%</span></div>
+                  <div class="abar"><span class="abar-name">SWE-Bench Verified</span><span class="abar-track"><span class="abar-fill verified"></span></span><span class="abar-val">24.4%</span></div>
+                </div>
+              </div>
+              <p class="slop-line">Coding agents write slop tests if you let them.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: UTBoost, ACL 2025</span></footer>
+        </section>
+
+        <section id="oracles-drift" class="slide-frame verification-deck" aria-label="Agent-written tests check what the code does, not what it should do, with two research quotes">
+          <header class="slide-meta"><span class="section-name">BACKGROUND CONTEXT</span><span class="folio">13 / 52</span></header>
+          <div class="slide-body">
+            <h2>Agent-written tests check what the code does, not what it should do</h2>
+            <div class="evidence-pair compact">
+              <figure class="evidence-card">
+                <blockquote><p>LLM test generation is “prone on generating oracles that capture the actual program behaviour rather than the expected one.”</p></blockquote>
+                <figcaption><strong>University of Luxembourg</strong> · Konstantinou et al.</figcaption>
+              </figure>
+              <figure class="evidence-card">
+                <blockquote><p>Existing generators “primarily generate regression oracles that predicate on the implemented behavior.”</p></blockquote>
+                <figcaption><strong>University of Auckland</strong> · Bodicoat et al.</figcaption>
+              </figure>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: arXiv 2410.21136 · arXiv 2601.05542, AIware 2025</span></footer>
+        </section>
+
+        <section id="checkin-1" class="slide-frame verification-deck demo-slide" aria-label="Live build check-in one: a prompt is not a check, with a prompt for rewriting prompts">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">14 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: add criteria and checks before work starts</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: rewrite this prompt with the prompt-engineer skill before any work starts">Use the prompt-engineer skill to rewrite this prompt before any work starts. Keep every requirement I wrote. Add objective success criteria, the check that decides each one, what the agent must not change, and when it must stop and report instead of continuing. Show me what you changed and why.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: Atomic prompt-engineer skill, packages/workflows/skills/prompt-engineer/SKILL.md</span></footer>
+        </section>
+
+        <section id="six-principles" class="slide-frame verification-deck" aria-label="Six principles for verification engineering, under the thesis line">
+          <header class="slide-meta"><span class="section-name">PRINCIPLES</span><span class="folio">15 / 52</span></header>
+          <div class="slide-body">
+            <h2>Six principles</h2>
+            <div class="stack">
+              <p class="lead-line"><strong>The agents that write the code should not determine when work is done.</strong></p>
+              <ul class="principle-list">
+                <li><span class="p-mark" aria-hidden="true">1</span><strong>Objective criteria before the work</strong></li>
+                <li><span class="p-mark" aria-hidden="true">2</span><strong>The author is not the judge</strong></li>
+                <li><span class="p-mark" aria-hidden="true">3</span><strong>Deterministic checks before model judgment</strong></li>
+                <li><span class="p-mark" aria-hidden="true">4</span><strong>Verify in a running environment on the platform that changed</strong></li>
+                <li><span class="p-mark" aria-hidden="true">5</span><strong>Completion requires saved evidence</strong></li>
+                <li><span class="p-mark" aria-hidden="true">6</span><strong>A person approves the criteria and the consequential steps</strong></li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="div-applying" class="slide-frame verification-deck section-divider ve-divider" aria-label="Section divider: Applying verification, from criteria to evidence">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">16 / 52</span></header>
+          <div class="slide-body divider-body">
+            <h2>Applying verification</h2>
+            <p>Criteria, tools, tests, oracles, environments, evidence</p>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="acceptance-criteria" class="slide-frame verification-deck" aria-label="Objective acceptance criteria: the six things an objective criterion names">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">17 / 52</span></header>
+          <div class="slide-body">
+            <h2>Objective acceptance criteria</h2>
+            <div class="stack tight">
+              <p class="group-title">An objective criterion names</p>
+              <ul class="plain cyan two-col">
+                <li>the actor and the starting state</li>
+                <li>one action</li>
+                <li>the result, on screen and in stored state</li>
+                <li>a numeric threshold where one applies</li>
+                <li>the oracle type</li>
+                <li>which dependencies must be real</li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="criteria-in-practice" class="slide-frame verification-deck" data-replay aria-label="The criterion in practice: an example lane-switch criterion next to the expected and unexpected outcomes, replayed on click">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">18 / 52</span></header>
+          <div class="slide-body">
+            <h2>Example criterion: one lane switch</h2>
+            <div class="split">
+              <div class="example-box">
+                <span class="group-title">Example</span>
+                <p>Player in the middle lane, train ahead. Press left once. Within 0.25 s the player is in the left lane, the run continues, and the game state reports lane = left.</p>
+              </div>
+              <div class="lane-pair">
+                <figure class="lane-case expected" aria-label="Expected: the player moves one lane left, the train passes, and the run continues">
+                  <div class="lane-track" aria-hidden="true"><span class="lane"><span></span><span></span><span></span></span><span class="lane"><span></span><span></span><span></span></span><span class="lane"><span></span><span></span><span></span></span><span class="lane-goal"></span><span class="lane-train"></span><span class="lane-runner"></span></div>
+                  <figcaption><strong>Expected<img class="lane-mark" src="./deck/media/icons/check.svg" alt="" /></strong>moves left, run continues</figcaption>
+                </figure>
+                <figure class="lane-case unexpected" aria-label="Unexpected: the player stays in the middle lane and the train reaches it">
+                  <div class="lane-track" aria-hidden="true"><span class="lane"><span></span><span></span><span></span></span><span class="lane"><span></span><span></span><span></span></span><span class="lane"><span></span><span></span><span></span></span><span class="lane-goal"></span><span class="lane-train"></span><span class="lane-runner"></span></div>
+                  <figcaption><strong>Unexpected<img class="lane-mark" src="./deck/media/icons/cross.svg" alt="" /></strong>stays in lane, hits the train</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: TiCoder, Fakhoury et al., IEEE TSE 2024</span></footer>
+        </section>
+
+        <section id="criteria-prompt" class="slide-frame verification-deck" aria-label="Prompt: write the acceptance criteria first and stop for review">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">19 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: write the criteria first</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: write the acceptance criteria and stop for review">Before writing any code, write the acceptance criteria for this change as a numbered list. Each criterion must be observable from outside the code: the starting state, the action, and the expected result. Add a numeric threshold where one applies. Mark which criteria need a real service, a browser, or a device to check. Then stop and wait for my review. Do not create or edit tests or code until I approve the list.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="test-contract" class="slide-frame verification-deck" aria-label="Review the test contract before work starts: an example criterion and the four fields its contract states">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">20 / 52</span></header>
+          <div class="slide-body">
+            <h2>Review the test contract before work starts</h2>
+            <figure class="contract-flow" aria-label="Example contract for one criterion: test level end to end, oracle lane equals left within 0.25 seconds, runs against the preview build in a real browser, held in tests/e2e/lane-switch.spec.ts">
+              <p class="criterion-chip"><span class="chip-tag">EXAMPLE</span>Press left once: within 0.25 s the player is in the left lane</p>
+              <dl class="contract-fields" data-motion="rise">
+                <div><dt>TEST LEVEL</dt><dd>end to end</dd></div>
+                <div><dt>ORACLE</dt><dd>example: lane = left within 0.25 s</dd></div>
+                <div><dt>RUNS AGAINST</dt><dd>the preview build in a real browser</dd></div>
+                <div><dt>HELD IN</dt><dd><code>tests/e2e/<wbr /><span class="nowrap">lane-switch.spec.ts</span></code></dd></div>
+              </dl>
+            </figure>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="contract-review" class="slide-frame verification-deck" aria-label="What I check in the test contract review: four checks">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">21 / 52</span></header>
+          <div class="slide-body">
+            <h2>What I check in the contract</h2>
+            <ul class="check-tiles" data-motion="rise">
+              <li aria-label="Checked: every criterion has an oracle"><img class="tile-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /><span>Every criterion has an oracle</span></li>
+              <li aria-label="Checked: expected values come from the criteria or a reference"><img class="tile-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /><span>Expected values come from the criteria or a reference</span></li>
+              <li aria-label="Checked: no mocks, every dependency is the real service"><img class="tile-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /><span>No mocks: every dependency is the real service</span></li>
+              <li aria-label="Checked: thresholds are numbers"><img class="tile-ok" src="./deck/media/icons/check.svg" alt="" aria-hidden="true" /><span>Thresholds are numbers</span></li>
+            </ul>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="contract-prompt" class="slide-frame verification-deck" aria-label="Prompt: propose the test contract for each approved criterion">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">22 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: propose the test contract</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: propose how each approved criterion will be checked">For each approved criterion, propose how it will be checked: the test level (unit, integration, or end to end), the oracle (example, property, invariant, contract, approved snapshot, or comparison with a reference), and the real service or environment it runs against. Use no mocks, stubs, or fakes. If a criterion cannot be checked against a real service, stop and tell me why instead of mocking it. Wait for my approval.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="tools-not-instructions" class="slide-frame verification-deck" aria-label="Deterministic tools instead of instruction files: a rule in an instruction file next to a deterministic tool">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">23 / 52</span></header>
+          <div class="slide-body">
+            <h2>Deterministic tools instead of instruction files</h2>
+            <div class="tool-compare row">
+              <article class="tool-col reject">
+                <header><span class="status-chip blocked">INSTRUCTION FILE</span></header>
+                <ul class="plain coral">
+                  <li>works only if the agent follows it</li>
+                  <li>one more line per failure</li>
+                </ul>
+              </article>
+              <article class="tool-col choose">
+                <header><span class="status-chip ok">TOOL</span></header>
+                <ul class="plain mint">
+                  <li>same result every run</li>
+                  <li>pass or fail exit code</li>
+                  <li>enforced by hooks and CI</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="atomic-tools" class="slide-frame verification-deck" aria-label="What Atomic uses, by what changed: repo checks, agent-browser, cua-driver, Herdr and the test runner">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">24 / 52</span></header>
+          <div class="slide-body">
+            <h2>What Atomic uses, by what changed</h2>
+            <table class="ve-table">
+              <thead><tr><th scope="col">What changed</th><th scope="col">Atomic uses</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Every change</th><td><span class="tool-set"><span class="tool mono"><img src="./deck/media/logos/biome.svg" alt="" />Biome</span><span class="tool mono"><img src="./deck/media/logos/vitest.svg" alt="" />Vitest</span><span class="tool mono">typecheck</span><span class="tool mono">clippy</span><span class="tool mono"><img src="./deck/media/logos/qlty.svg" alt="" />qlty</span></span></td></tr>
+                <tr><th scope="row">Web, Electron and CDP apps</th><td><span class="tool mono"><img src="./deck/media/logos/agent-browser.png" alt="" />agent-browser</span></td></tr>
+                <tr><th scope="row">Mobile Safari</th><td><span class="tool mono"><img src="./deck/media/logos/agent-browser.png" alt="" />agent-browser -p ios</span></td></tr>
+                <tr><th scope="row">Native and emulator apps</th><td><span class="tool mono"><img src="./deck/media/logos/cua.svg" alt="" />cua-driver</span></td></tr>
+                <tr><th scope="row">Terminal and TUI</th><td><span class="tool-set"><span class="tool mono"><img src="./deck/media/logos/herdr.svg" alt="" />Herdr</span><span class="tool plain-name">or <span class="tool mono">tmux</span></span></span></td></tr>
+                <tr><th scope="row">API or library</th><td>existing test runner</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: tool logos from each project’s repository or site</span></footer>
+        </section>
+
+        <section id="tooling-prompt" class="slide-frame verification-deck" aria-label="Prompt: run the repository checks and the static gate, then report">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">25 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: run the checks and report</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: run the repository checks and the static gate, then report">Run the repository's own checks first. Then run the static quality gate on the changed files only. Fix in-scope findings. Report what passed, what failed, and what did not run, with output.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="deterministic-order" class="slide-frame verification-deck" aria-label="Deterministic checks before model judgment: a six-tier stack with the model judge on top">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">26 / 52</span></header>
+          <div class="slide-body">
+            <h2>Deterministic checks before model judgment</h2>
+            <figure class="tier-figure">
+              <ol class="tiers" data-motion="rise" aria-label="Checks in run order, first at the bottom">
+                <li><strong>Types</strong></li>
+                <li><strong>Lint and static analysis</strong></li>
+                <li><strong>Unit tests</strong></li>
+                <li><strong>Integration tests against real services</strong></li>
+                <li><strong>End to end on the running app</strong></li>
+                <li class="model"><strong>Model judge</strong></li>
+              </ol>
+              <ul class="tier-key" aria-label="Key">
+                <li class="det">Deterministic</li>
+                <li class="mdl">Model</li>
+              </ul>
+            </figure>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="tdd-skill" class="slide-frame verification-deck" aria-label="One TDD skill, if you need one: a map of the files inside Atomic's TDD skill">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">27 / 52</span></header>
+          <div class="slide-body">
+            <h2>Atomic’s TDD skill: seven files</h2>
+            <ul class="skill-files">
+              <li class="primary"><span class="file-name">SKILL.md</span><span>test behavior through public interfaces, one test at a time</span></li>
+              <li><span class="file-name">test-audit.md</span><span>the value gate and 15 junk patterns</span></li>
+              <li><span class="file-name">mocking.md</span><span>boundary mocks. <strong>Ours: none.</strong></span></li>
+              <li><span class="file-name">tests.md</span><span>good and bad tests</span></li>
+              <li><span class="file-name">interface-design.md</span><span>testable interfaces</span></li>
+              <li><span class="file-name">deep-modules.md</span><span>small interface, deep module</span></li>
+              <li><span class="file-name">refactoring.md</span><span>refactor after green</span></li>
+            </ul>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: Atomic TDD skill, packages/subagents/skills/tdd/ · github.com/bastani-inc/atomic</span></footer>
+        </section>
+
+        <section id="value-gate" class="slide-frame verification-deck" aria-label="The value gate, before a test lands: four questions">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">28 / 52</span></header>
+          <div class="slide-body">
+            <h2>The value gate, before a test lands</h2>
+            <figure class="gate-flow" aria-label="A new test passes four gates, one question each, before it lands in the suite">
+              <ol class="gate-row" data-motion="rise">
+                <li class="gate-end"><strong>New test</strong></li>
+                <li class="gate"><span class="gate-kind">BEHAVIOR</span><strong>What behavior does it protect?</strong></li>
+                <li class="gate"><span class="gate-kind">FAILURE</span><strong>What code change would make it fail?</strong></li>
+                <li class="gate"><span class="gate-kind">GAP</span><strong>Why does no existing test catch that?</strong></li>
+                <li class="gate"><span class="gate-kind">SEAM</span><strong>Does it need a seam only the test uses?</strong></li>
+                <li class="gate-end suite"><strong>Lands in the suite</strong></li>
+              </ol>
+              <div class="gate-rail" aria-hidden="true"><span class="gate-token"></span></div>
+            </figure>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: value gate adapted from OpenClaw's test-audit skill, in Atomic's TDD skill (test-audit.md)</span></footer>
+        </section>
+
+        <section id="vertical-slices" class="slide-frame verification-deck" aria-label="Vertical test slices: horizontal slicing as the anti-pattern next to vertical slices">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">29 / 52</span></header>
+          <div class="slide-body">
+            <h2>Vertical test slices</h2>
+            <div class="slice-pair">
+              <figure class="slice reject">
+                <figcaption class="slice-bar"><s>HORIZONTAL</s> · THE ANTI-PATTERN</figcaption>
+<pre class="slice-code" aria-label="Horizontal: all tests, then all implementations">RED:   test1, test2, test3, test4, test5
+GREEN: impl1, impl2, impl3, impl4, impl5</pre>
+                <p class="slice-note">Tests describe imagined behavior.</p>
+              </figure>
+              <figure class="slice choose">
+                <figcaption class="slice-bar">✓ VERTICAL</figcaption>
+<pre class="slice-code" aria-label="Vertical: one test, then its implementation, repeated">RED→GREEN: test1→impl1
+RED→GREEN: test2→impl2
+RED→GREEN: test3→impl3</pre>
+                <p class="slice-note">Each test uses what the last cycle showed.</p>
+              </figure>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="slices-prompt" class="slide-frame verification-deck" aria-label="Prompt: implement in vertical slices, one behavior at a time">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">30 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: one behavior at a time</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: implement in vertical slices">Implement this in vertical slices. For each behavior, write one test, run it, and show me that it fails for the expected reason. Then write the minimum code to make it pass and run the full suite. Do not start the next test until the current one passes. Do not edit a test after it fails in order to make it pass. If you think a test is wrong, stop and tell me.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="real-services" class="slide-frame verification-deck" aria-label="No mocks, test against real services: where databases, services and failures run">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">31 / 52</span></header>
+          <div class="slide-body">
+            <h2>No mocks: test against real services</h2>
+            <div class="real-split">
+              <dl class="real-map" data-motion="rise">
+                <div><dt>Databases and brokers</dt><dd>the real one, in a container</dd></div>
+                <div><dt>Services</dt><dd>a dev or test environment</dd></div>
+                <div><dt>Timeouts and errors</dt><dd>injected into the real service</dd></div>
+              </dl>
+              <img class="real-visual" src="./deck/media/visuals/real-services.png" alt="" aria-hidden="true" />
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="real-services-prompt" class="slide-frame verification-deck" aria-label="Prompt: find every mock, stub and fake and plan replacing them with real services">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">32 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: replace mocks with real services</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: plan replacing every test double in a path with the real service">Find every mock, stub, and fake in the tests in <span class="slot">[path]</span>, with its file and line. For each one, name the real service it stands in for and propose how to run that test against the real service in a dev or test environment. For failures that are hard to trigger, such as timeouts, propose how to inject them into the real service. Do not change anything yet. Give me the list and the plan.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="checkin-2" class="slide-frame verification-deck demo-slide" aria-label="Live build check-in two: the stage that builds it does not decide it is done, with a prompt for writing a checked workflow">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">33 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: a check in code after every workflow stage</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: write an Atomic workflow where a check in code decides each stage">Write an Atomic workflow for this job. Every stage writes its output to a file. After each stage, run a check in code that fails the stage when the output is missing or wrong, and send the failure output back to that stage to fix. The stage that builds something does not check it. Promote output only after its checks pass, and save a record of every check that ran.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: Atomic workflow docs, docs/workflows/authoring.md</span></footer>
+        </section>
+
+        <section id="hard-to-game-oracles" class="slide-frame verification-deck" aria-label="Oracles that are harder to game: seven kinds, how each works, why it is harder to game, and an example for the runner">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">34 / 52</span></header>
+          <div class="slide-body">
+            <h2>Oracles that are harder to game</h2>
+            <table class="ve-table oracle-table">
+              <thead><tr><th scope="col">Oracle</th><th scope="col">How it works</th><th scope="col">Why it is harder to game</th><th scope="col">Example</th></tr></thead>
+              <tbody>
+                <tr class="fragment custom row-focus"><th scope="row">Property-based</th><td>A rule over many generated inputs</td><td>A hard-coded output can’t pass them all</td><td>every row of obstacles leaves a lane the player can pass</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Metamorphic</th><td>Related inputs, related outputs</td><td>No stored expected value to copy</td><td>the same inputs at 30 and 120 fps give the same score</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Differential</th><td>Two implementations, same input</td><td>The reference is outside the agent’s diff</td><td>Blender and three.js report the same triangle count</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Mutation</th><td>Small faults planted in the change</td><td>Catches tests that assert nothing</td><td>remove the collision check and the crash test fails</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Approved snapshot</th><td>A reviewed expected output</td><td>Updating it is a person’s decision</td><td>a Blender preview render a person approved</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Invariants and contracts</th><td>Pre- and postconditions on every run</td><td>They hold in every test and every run</td><td>the player is always in one of three lanes</td></tr>
+                <tr class="fragment custom row-focus"><th scope="row">Deterministic simulation and replay</th><td>Seeded inputs, replayed exactly</td><td>A failure reproduces from its seed</td><td>a recorded input trace replays to the same crash frame</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="oracle-qualities" class="slide-frame verification-deck" aria-label="Qualities of an oracle that is hard to game: six qualities">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">35 / 52</span></header>
+          <div class="slide-body">
+            <h2>Qualities of an oracle that is hard to game</h2>
+            <ul class="principle-list sm">
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>written from the criteria or a reference</strong></li>
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>generated or relational inputs</strong></li>
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>reproduces from a seed or a trace</strong></li>
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>fails when the change is reverted</strong></li>
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>outside the agent’s write access</strong></li>
+              <li><span class="p-mark" aria-hidden="true">✓</span><strong>changes only through a reviewed diff</strong></li>
+            </ul>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="property-prompt" class="slide-frame verification-deck" aria-label="Prompt: write invariants as seeded property-based tests">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">36 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: invariants as property tests</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: write invariants as seeded property-based tests">List the invariants this module must hold for any valid input, for example round trip, idempotence, ordering, conservation of totals, or no negative balances. Write each one as a property-based test with a fixed seed. When a property fails, show me the shrunk counterexample before you change any code.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="independent-review" class="slide-frame verification-deck" aria-label="Review by an agent that did not write the code: four ways to keep test edits visible">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">37 / 52</span></header>
+          <div class="slide-body">
+            <h2>Review by an agent that did not write the code</h2>
+            <div class="stack tight">
+              <p class="group-title">Keep test edits visible</p>
+              <ul class="principle-list sm">
+                <li><span class="p-mark" aria-hidden="true">✓</span><strong>tests and golden values outside the agent’s write access</strong></li>
+                <li><span class="p-mark" aria-hidden="true">✓</span><strong>required owners on test paths</strong></li>
+                <li><span class="p-mark" aria-hidden="true">✓</span><strong>tests and code changed in one PR: flagged for a person</strong></li>
+                <li><span class="p-mark" aria-hidden="true">✓</span><strong>snapshot updates need a person’s approval</strong></li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="reviewer-prompt" class="slide-frame verification-deck" aria-label="Prompt: review the diff in a fresh context against the approved criteria only">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">38 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: review in a fresh context</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: review the diff against the approved criteria only">You did not write this change. Review the diff against the approved acceptance criteria only. For each criterion, say whether the diff and its tests prove it, with file and line. List every test that was modified or deleted, every assertion that was removed, every snapshot that was updated, and every test that was skipped. Return findings, not fixes.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="checkin-3" class="slide-frame verification-deck demo-slide" aria-label="Live build check-in three: the three checks on every generated 3D model, loader, triangle and texture limits, and reviewed renders">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">39 / 52</span></header>
+          <div class="slide-body">
+            <h2>Checks on every generated 3D model</h2>
+            <ol class="asset-checks" data-motion="rise" aria-label="Checks for every generated 3D model, in order">
+              <li><strong>Loads in three.js GLTFLoader</strong><span>the same loader the game uses, zero errors</span></li>
+              <li><strong>Triangle count and texture size under a limit</strong><span>Blender decimates each mesh to a per-asset limit (2,000 to 10,000 triangles) with textures at most 1024 px. Limits are set before generation.</span></li>
+              <li><strong>Front, side and top renders reviewed</strong><span>the model must be upright and match its concept image before it goes in the game</span></li>
+            </ol>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="asset-prompt" class="slide-frame verification-deck" aria-label="Prompt: check every generated asset before it is used">
+          <header class="slide-meta"><span class="section-name">LIVE BUILD</span><span class="folio">40 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: check every generated asset</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: check every generated asset before it is used">Before any generated asset is used, check it. Load it with the same loader the app uses and fail on any error. Check its file size and triangle count against the budget. Render a preview from the front, side and top, and save the renders with the numbers. Mark the asset unverified until those checks pass and a reviewer has looked at the renders.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="production-circles" class="slide-frame verification-deck" aria-label="Verify in dev, dogfood and canary environments: what the agent does in each environment">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">41 / 52</span></header>
+          <div class="slide-body">
+            <h2>Verify in dev, dogfood and canary environments</h2>
+            <table class="ve-table env-table">
+              <thead><tr><th scope="col">Environment</th><th scope="col">Enforced in the workflow, for example</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Dev or preview</th><td>Runs user journeys with test accounts, reads logs</td></tr>
+                <tr><th scope="row">Staging</th><td>Acceptance journeys and a short load test</td></tr>
+                <tr><th scope="row">Dogfood</th><td>Scripted journeys as a test user, compared with the last build</td></tr>
+                <tr><th scope="row">Canary</th><td>Reads only. Compares with the control and reports</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="enforced-in-code" class="slide-frame verification-deck" aria-label="Enforced in code, not in the prompt: three limits on where the agent can act">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">42 / 52</span></header>
+          <div class="slide-body">
+            <h2>Enforced in code, not in the prompt</h2>
+            <table class="ve-table env-table">
+              <thead><tr><th scope="col">Limit</th><th scope="col">How it is enforced</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Allowed environment</th><td>A check rejects any other target or credential</td></tr>
+                <tr><th scope="row">Production</th><td>Waits at a human approval gate the agent cannot answer</td></tr>
+                <tr><th scope="row">Access</th><td>Least privilege and a domain allowlist</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="environment-prompt" class="slide-frame verification-deck" aria-label="Prompt: verify the change in one named environment with a test account">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">43 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: one environment, test account</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: verify the change only in one named environment">Verify this change only in the environment at <span class="slot">[URL]</span>. Use the test account I gave you. Do not use production credentials or production data. Run the journeys in <span class="slot">[file]</span> and compare error rate and p95 latency with the current stable build for the same journeys. If any check fails, stop and report it. Do not rerun until it passes and do not deploy anywhere else.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="agents-as-users" class="slide-frame verification-deck" aria-label="Agents run the user journey: the driver and what it checks, by changed surface">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">44 / 52</span></header>
+          <div class="slide-body">
+            <h2>Agents run the user journey</h2>
+            <div class="stack tight">
+              <table class="ve-table">
+                <thead><tr><th scope="col">Changed surface</th><th scope="col">Driver</th><th scope="col">What it checks</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Web or Electron app</th><td class="mono">agent-browser</td><td>the flow, DOM and network</td></tr>
+                  <tr><th scope="row">Native app, simulator, OS dialog</th><td class="mono">Cua Driver</td><td>window state and a postcondition</td></tr>
+                  <tr><th scope="row">Terminal app</th><td class="mono">Herdr, tmux</td><td>real input and rendered output</td></tr>
+                  <tr><th scope="row">API or library</th><td class="mono">test runner</td><td>inputs, outputs, errors</td></tr>
+                </tbody>
+              </table>
+              <p class="table-note">Check stored state, not only the confirmation screen.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="jev-postconditions" class="slide-frame verification-deck" aria-label="Faster postcondition checks with decision models: snapshot text to a decision model's probability, then continue or escalate">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">45 / 52</span></header>
+          <div class="slide-body">
+            <h2>Faster postcondition checks with decision models</h2>
+            <ol class="mini-flow" data-motion="rise" aria-label="Snapshot text goes to Jev, which returns a probability: high continues, low escalates">
+              <li class="flow-node"><span class="flow-kind">INPUT</span><strong>Snapshot text</strong></li>
+              <li class="flow-node jev"><span class="flow-kind">DECISION MODEL</span><strong>Jev</strong></li>
+              <li class="flow-node"><span class="flow-kind">OUTPUT</span><strong>Probability</strong></li>
+              <li class="flow-branches">
+                <p class="branch ok"><span>HIGH</span>continue</p>
+                <p class="branch low"><span>LOW</span>chat model with a screenshot, or a person</p>
+              </li>
+            </ol>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="decisions-api" class="slide-frame verification-deck" data-replay aria-label="Check the whole screen with the Decisions API: gpt-6-luna answers questions about a screenshot of the game taken right after the agent pressed left, next to OpenAI's own demo">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">46 / 52</span></header>
+          <div class="slide-body">
+            <h2>Check the whole screen with the Decisions API</h2>
+            <div class="decide-split" data-motion="rise">
+              <figure class="decide-shot" aria-label="Screenshot of the game right after the agent pressed left: the runner is in the left lane. gpt-6-luna answers 0.98 that the runner is in the left lane.">
+                <div class="shot-frame"><div class="shot-canvas">
+                  <img class="shot-img" src="./deck/media/game/after-left-lane.webp" alt="" width="1600" height="900" />
+                </div></div>
+                <figcaption class="decide-q"><span class="q-type">PREDICATE</span><strong>Is the runner in the left lane?</strong><span class="q-answer">0.98</span></figcaption>
+              </figure>
+              <div class="decide-side">
+                <figure class="oai-demo">
+                  <video class="oai-video" src="./deck/media/openai/decisions-choice-demo.mp4" poster="./deck/media/openai/decisions-choice-demo-end.webp" muted playsinline preload="auto" width="1160" height="534" aria-label="OpenAI's demo: a choice question picks a lane for a car, and the probability moves to lane 1 when barriers block lanes 2 and 3"></video>
+                </figure>
+                <p class="fact-line">gpt-6-luna · Decisions API · public beta</p>
+                <p class="decide-q check"><span class="q-type">CHOICE</span><strong>Which screen is showing?</strong><span class="q-answer">running</span></p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: OpenAI, Decisions API guide (demo)</span></footer>
+        </section>
+
+        <section id="journey-prompt" class="slide-frame verification-deck" aria-label="Prompt: run a user journey through the UI and check stored state">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">47 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: run the journey through the UI</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: run a user journey through the UI and check stored state">Start the app in the dev environment against its real backing services. Run this journey the way a user would, through the UI only: <span class="slot">[steps]</span>. After each step, save a screenshot and the relevant network response or log line. At the end, check the stored state directly (the database row, file, or API resource) and compare it with what the screen shows. Report pass or fail per step with the evidence. Do not change code during this run.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="pr-evidence" class="slide-frame verification-deck" aria-label="Completion requires saved evidence: the five fields of a PR verification section">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">48 / 52</span></header>
+          <div class="slide-body">
+            <h2>Completion requires saved evidence</h2>
+            <dl class="field-cards" data-motion="rise">
+              <div><dt>Candidate</dt><dd>the commit</dd></div>
+              <div><dt>Environment</dt><dd>where it ran</dd></div>
+              <div><dt>Checks</dt><dd>command, exit code, output</dd></div>
+              <div><dt>Scenario</dt><dd>start state, actions, expected and observed result</dd></div>
+              <div><dt>Evidence</dt><dd>screenshots, videos, logs</dd></div>
+            </dl>
+          </div>
+          <footer class="slide-footer"><span class="source">Credits: Atomic docs/workflows/verification.md:149-157</span></footer>
+        </section>
+
+        <section id="evidence-prompt" class="slide-frame verification-deck" aria-label="Prompt: write the verification section for the pull request">
+          <header class="slide-meta"><span class="section-name">APPLYING VERIFICATION</span><span class="folio">49 / 52</span></header>
+          <div class="slide-body">
+            <h2>Prompt: write the verification section</h2>
+            <div class="prompt-solo">
+              <div class="prompt-window" role="group" aria-label="Prompt" data-composer="prompt">
+<pre class="prompt-body" aria-label="Prompt: write the verification section for this pull request">Write the verification section for this pull request. For each acceptance criterion, give the command or scenario you ran, the observed output or a screenshot, and pass or fail. List anything you could not verify and why. Do not mark a criterion as passed unless you ran its check in this session.</pre>
+                <div class="prompt-bar"><img class="composer-icon" src="./deck/media/icons/plus.svg" alt="" aria-hidden="true" /><span class="composer-tools" aria-hidden="true"><img class="composer-icon" src="./deck/media/icons/mic.svg" alt="" /><img class="composer-send" src="./deck/media/icons/send.svg" alt="" /></span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="atomic-plug" class="slide-frame verification-deck" aria-label="Atomic: what it does for verification, with workflows, gates, fresh reviewers, saved evidence and the repository link">
+          <header class="slide-meta"><span class="section-name">ATOMIC</span><span class="folio">50 / 52</span></header>
+          <div class="slide-body">
+            <h2>Atomic</h2>
+            <div class="stack">
+              <ul class="plug-grid">
+                <li><strong>Workflows</strong><span>a check in code after every stage</span></li>
+                <li><strong>Gates</strong><span>the run waits for a person</span></li>
+                <li><strong>Fresh reviewers</strong><span>a reviewer that did not write the code</span></li>
+                <li><strong>Saved evidence</strong><span>every check keeps its output</span></li>
+              </ul>
+              <p class="plug-link"><span>OPEN SOURCE</span><a href="https://github.com/bastani-inc/atomic" target="_blank" rel="noopener noreferrer"><code>github.com/bastani-inc/atomic</code></a></p>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="closing-qa" class="slide-frame verification-deck closing-slide" aria-label="Closing and questions: the thesis and Alex Lavaee's contact details, Microsoft Research">
+          <header class="slide-meta"><span class="section-name">Q&amp;A</span><span class="folio">51 / 52</span></header>
+          <div class="slide-body closing-body">
+            <div class="closing-main">
+              <h2>The agents that write the code should not determine when work is <span class="highlight-yellow">done.</span></h2>
+              <div class="speaker-card">
+                <p class="speaker-card-name">Alex Lavaee</p>
+                <p class="speaker-card-role">Microsoft Research</p>
+                <ul class="contact">
+                  <li><img class="contact-icon" src="./deck/media/icons/linkedin.png" alt="LinkedIn" /><a href="https://www.linkedin.com/in/alexlavaee/" target="_blank" rel="noopener noreferrer"><code>https://www.linkedin.com/in/alexlavaee/</code></a></li>
+                  <li><img class="contact-icon" src="./deck/media/icons/x.png" alt="X" /><a href="https://x.com/alexlavaee" target="_blank" rel="noopener noreferrer"><code>https://x.com/alexlavaee</code></a></li>
+                  <li><img class="contact-icon" src="./deck/media/icons/github.svg" alt="GitHub" /><a href="https://github.com/bastani-inc/atomic" target="_blank" rel="noopener noreferrer"><code>https://github.com/bastani-inc/atomic</code></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+        <section id="resources" class="slide-frame verification-deck" aria-label="Resources: Atomic, its prompt-engineer, TDD and qlty skills, workflow docs, verification tools, practice and research sources">
+          <header class="slide-meta"><span class="section-name">RESOURCES</span><span class="folio">52 / 52</span></header>
+          <div class="slide-body">
+            <h2>Resources</h2>
+            <ul class="reading-list">
+              <li><span class="rl-what">Atomic</span><a href="https://github.com/bastani-inc/atomic" target="_blank" rel="noopener noreferrer"><code>github.com/bastani-inc/atomic</code></a></li>
+              <li><span class="rl-what">Atomic’s prompt-engineer skill</span><a href="https://github.com/bastani-inc/atomic/tree/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/workflows/skills/prompt-engineer" target="_blank" rel="noopener noreferrer"><code>skills/prompt-engineer/</code></a></li>
+              <li><span class="rl-what">Writing workflows</span><span class="rl-links"><a href="https://github.com/bastani-inc/atomic/blob/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/coding-agent/docs/workflows.md" target="_blank" rel="noopener noreferrer"><code>docs/workflows.md</code></a> · <a href="https://github.com/bastani-inc/atomic/blob/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/coding-agent/docs/workflows/authoring.md" target="_blank" rel="noopener noreferrer"><code>authoring.md</code></a></span></li>
+              <li><span class="rl-what">Atomic’s TDD and qlty skills</span><span class="rl-links"><a href="https://github.com/bastani-inc/atomic/tree/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/subagents/skills/tdd" target="_blank" rel="noopener noreferrer"><code>skills/tdd/</code></a> · <a href="https://github.com/bastani-inc/atomic/tree/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/subagents/skills/qlty" target="_blank" rel="noopener noreferrer"><code>skills/qlty/</code></a></span></li>
+              <li><span class="rl-what">Verification guide and PR section</span><a href="https://github.com/bastani-inc/atomic/blob/fbf95a1e3b2a896af484d33c7723565e2588952c/packages/coding-agent/docs/workflows/verification.md" target="_blank" rel="noopener noreferrer"><code>docs/workflows/verification.md</code></a></li>
+              <li><span class="rl-what">Verification tools</span><span class="rl-text">agent-browser · cua-driver · Herdr · qlty · OpenAI Decisions API</span></li>
+              <li><span class="rl-what">Community</span><span class="rl-links"><a href="https://discord.gg/9CvdXUGXR4" target="_blank" rel="noopener noreferrer"><code>Atomic Discord</code></a> · <a href="https://www.youtube.com/@mixture-of-experts" target="_blank" rel="noopener noreferrer"><code>Mixture of Experts on YouTube</code></a></span></li>
+              <li><span class="rl-what">Practice</span><span class="rl-text">AWS Builders’ Library · Google SRE Workbook · Azure safe deployment</span></li>
+              <li><span class="rl-what">Research</span><span class="rl-text">METR · ImpossibleBench · UTBoost · TiCoder · Konstantinou et al. · Simon Willison</span></li>
+            </ul>
+          </div>
+          <footer class="slide-footer"></footer>
+        </section>
+
+      </div>
+    </main>
+
+    <template id="repo-signature-template"><a class="repo-signature" href="https://github.com/bastani-inc/atomic" target="_blank" rel="noopener noreferrer" aria-label="Open the Atomic repository on GitHub"><img src="./assets/brand/atomic-mark.svg" alt="" aria-hidden="true" /><span>github.com/bastani-inc/atomic</span></a></template>
+    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./deck/motion.js"></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "test-engineering-deck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Verification Engineering for Agent-Written Code: a Reveal.js slide deck.",
+  "license": "SEE LICENSE IN README.md",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.6",
+    "@fontsource-variable/manrope": "^5.2.6",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/manrope": "^5.2.8",
+    "reveal.js": "^5.2.1"
+  },
+  "devDependencies": {
+    "vite": "^7.0.4"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

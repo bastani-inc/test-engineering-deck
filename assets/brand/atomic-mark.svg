@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 528 374" role="img" aria-labelledby="title desc" shape-rendering="crispEdges">
+  <title id="title">Atomic</title>
+  <desc id="desc">Borderless pixelated upside-down A mark in Atomic blue.</desc>
+  <g fill="#313438" opacity="0.72">
+    <rect x="496" y="34" width="32" height="34"/>
+    <rect x="480" y="68" width="32" height="34"/>
+    <rect x="464" y="102" width="32" height="34"/>
+    <rect x="448" y="136" width="32" height="34"/>
+    <rect x="192" y="170" width="128" height="34"/>
+    <rect x="432" y="170" width="32" height="34"/>
+    <rect x="416" y="204" width="32" height="34"/>
+    <rect x="400" y="238" width="32" height="34"/>
+    <rect x="384" y="272" width="32" height="34"/>
+    <rect x="144" y="306" width="16" height="34"/>
+    <rect x="352" y="306" width="48" height="34"/>
+    <rect x="176" y="340" width="192" height="34"/>
+  </g>
+  <g fill="#5f87ff">
+    <rect x="0" y="0" width="104" height="17"/>
+    <rect x="408" y="0" width="104" height="17"/>
+    <rect x="0" y="17" width="112" height="17"/>
+    <rect x="400" y="17" width="112" height="17"/>
+    <rect x="16" y="34" width="104" height="17"/>
+    <rect x="392" y="34" width="104" height="17"/>
+    <rect x="16" y="51" width="112" height="17"/>
+    <rect x="384" y="51" width="112" height="17"/>
+    <rect x="32" y="68" width="104" height="17"/>
+    <rect x="376" y="68" width="104" height="17"/>
+    <rect x="32" y="85" width="112" height="17"/>
+    <rect x="368" y="85" width="112" height="17"/>
+    <rect x="48" y="102" width="104" height="17"/>
+    <rect x="360" y="102" width="104" height="17"/>
+    <rect x="48" y="119" width="112" height="17"/>
+    <rect x="352" y="119" width="112" height="17"/>
+    <rect x="64" y="136" width="384" height="34"/>
+    <rect x="80" y="170" width="112" height="17"/>
+    <rect x="320" y="170" width="112" height="17"/>
+    <rect x="80" y="187" width="104" height="17"/>
+    <rect x="328" y="187" width="104" height="17"/>
+    <rect x="96" y="204" width="112" height="17"/>
+    <rect x="304" y="204" width="112" height="17"/>
+    <rect x="96" y="221" width="104" height="17"/>
+    <rect x="312" y="221" width="104" height="17"/>
+    <rect x="112" y="238" width="112" height="17"/>
+    <rect x="288" y="238" width="112" height="17"/>
+    <rect x="112" y="255" width="104" height="17"/>
+    <rect x="296" y="255" width="104" height="17"/>
+    <rect x="128" y="272" width="112" height="17"/>
+    <rect x="272" y="272" width="112" height="17"/>
+    <rect x="128" y="289" width="104" height="17"/>
+    <rect x="280" y="289" width="104" height="17"/>
+    <rect x="160" y="306" width="192" height="34"/>
+  </g>
+</svg>
