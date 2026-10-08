@@ -1,6 +1,6 @@
 # Verification Engineering for Agent-Written Code
 
-A 52-slide deck by Alex Lavaee (Microsoft Research), made for The Neuron livestream on October 8, 2026.
+A 52-slide deck by Alex Lavaee, made for The Neuron livestream on October 8, 2026.
 
 The talk asks one question: who decides that agent-written code is done? Its answer is that the agent that writes the code shouldn't. The deck covers:
 
